@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="/js/my.js"></script>
+<script>
+	var parametersGenerated = 0;
+	var numbers = new Array();
+	var prime = new Array();
+	var publicKeys = new Array();
+	var errorMSG;
+	var totProduct;
+	var cipheredPTarr = new Array();
+	var CT = new Array();//stores encrypted plain text numbers
+	var decryptedCTnum = new Array();//stores decrypted cipher text numbers
+	var privateKey = 0;
+	var pubKey = 0;
+	var mod = 0;
+	var thetaN = 0;
+	var primeLimit = 0; 
+    var modResult = new Array();
+
+	var expos = new Array();
+	var expos2 = new Array();
+	var totPwrCalc = new Array();
+	var encryptedCT = new Array();
+	
+//Main function	
+function myFunction() {	
+	var a = 2;
+	var c = 0;
+	var length = 0;
+	var primeNum1 = 0;
+	var primeNum2 = 0;
+	var message = "";
+	var text = "";
+	var random1 = 0;
+	var random2 = 0;
+	var z = 1;
+	var pubKeyModGCD = 0;	
+	var PrimeGenerateMSG = "";
+	var isInteger = /^[0-9]\d*$/;//Regular expression for numeric digits only
+	parametersGenerated = 0;
+	
+	//Clear fields of inactive tab
+	inputParamClear();
+	document.getElementById("demo2").innerHTML = '';
+	document.getElementById("demo4").innerHTML = '';
+	
+	//Ensure that user has input a limit of prime numbers to be generated to avoid system from crashing
+	if(document.getElementById("Limit").value == "" ||document.getElementById("Limit").value < 3||isInteger.test(document.getElementById("Limit").value) == false)
+	{
+		message = "<font color='red'>Error! Please enter an integer >= 100</font>";
+		document.getElementById("demo1").innerHTML = message;
+		primeNum1 = '';
+		primeNum2 = '';
+		mod = '';
+		thetaN = '';
+		pubKey = '';
+		privateKey = '';
+		document.getElementById("prime1").innerHTML = '';
+		document.getElementById("prime2").innerHTML = '';
+		document.getElementById("lblMod").innerHTML = '';	
+		document.getElementById("lblThetaN").innerHTML = '';
+	    document.getElementById("lblPubKey").innerHTML = '';
+		document.getElementById("lblPrivateKey").innerHTML = '';
+	}	
+	else//If user did input a limit
+	{
+		document.getElementById("demo1").innerHTML = "";
+			
+		primeLimit = document.getElementById("Limit").value;
+		
+		PrimeGenerateMSG = "PRIME NUMBERS < " + primeLimit + "<br/>";
+		document.getElementById("demo").innerHTML = PrimeGenerateMSG;
+		while(a<primeLimit)
+		{
+			for(var b = 2; b < a ; b++)
+			{
+				c = a/b;
+				if(a%b == 0)
+				{
+					numbers.push(c)
+				}
+			}
+			
+			if(numbers.length == 0)
+			{
+				prime.push(a);
+				document.getElementById("demo").innerHTML += a + "<br/>";
+			}
+			numbers = [];
+			++a;
+		}
+		random1 = Math.floor(Math.random() * prime.length);
+		random2 = Math.floor(Math.random() * prime.length);
+		while(random1 == random2)
+		{
+			random2 = Math.floor(Math.random() * prime.length);
+		}
+		primeNum1 = prime[random1];
+		primeNum2 = prime[random2];						
+		document.getElementById("prime1").innerHTML = primeNum1;
+		document.getElementById("prime2").innerHTML = primeNum2;		
+		mod = primeNum1 * primeNum2;				
+		document.getElementById("lblMod").innerHTML = mod;		
+		thetaN = (primeNum1 - 1) * (primeNum2 - 1);		
+		document.getElementById("lblThetaN").innerHTML = thetaN;		
+		pubKey = GetPublicKey(thetaN);
+		while(pubKey == 1)
+		{
+			pubKey = GetPublicKey(thetaN);
+		}		
+		document.getElementById("lblPubKey").innerHTML = pubKey;		
+		pubKeyModGCD = GetGCD(pubKey, thetaN);
+		
+		if(pubKeyModGCD != 1)
+		{
+			pubKey = GetPublicKey(thetaN);
+			while(pubKey == 1)
+			{
+				pubKey = GetPublicKey(thetaN);
+			}		
+			document.getElementById("lblPubKey").innerHTML = pubKey;		
+			pubKeyModGCD = GetGCD(pubKey, thetaN);
+		}
+		else
+		{
+			privateKey = GetPrivateKey(pubKey, thetaN)
+			while(privateKey == pubKey)
+			{
+				privateKey = GetPrivateKey(pubKey, thetaN)
+			}
+			document.getElementById("lblPrivateKey").innerHTML = privateKey;
+			parametersGenerated = 1;	
+		}		
+					
+		document.getElementById("PTencryptWarn").InnerHTML += "<br/>" + "modResult: " + modResult;
+		document.getElementById("demo3").innerHTML = "<font color='green'>Parameters saved</font>";
+	}		
+}
+
+//Choose a public key
+function GetPublicKey(ThetaN)
+{
+	var gcd;
+	var randPubKey = 0;
+	var rand = 0;
+	
+	for(var e = 1; e < ThetaN; e++)
+	{
+		gcd = GetGCD(e, ThetaN);
+		if(gcd == 1)
+		{
+			publicKeys.push(e);
+		}
+	}
+	rand = Math.floor(Math.random() * publicKeys.length);
+	randPubKey = publicKeys[rand];
+	return randPubKey;
+}
+
+//Get greatest common denominator
+function GetGCD(a, b)
+{
+	var gcd = 0;
+	var c = 0;
+	var r = 1;
+	if (b > a)//Sets the a as the larger number and b as the smaller number
+            {
+                b = b - a;
+                a = a + b;
+            }
+            while (r != 0)
+            {
+                gcd = r;
+                c = a / b;//sets c as a/b
+                r = a % b;//set r as remainder of a/b
+
+                a = b;
+                b = r;
+            }
+            return gcd;
+}
+
+//Generate private key 
+function GetPrivateKey(a, n)
+{
+	var Mod = n;
+	var result = 2;
+	var b = 1;
+	while(result != 1)
+	{
+		b++;
+		result = (a*b) % Mod;
+	}
+	return b;
+}
+
+//Clear text area
+function ClearPTTextArea()
+{
+	document.getElementById("txtPlainText").value = '';
+}
+
+//Start the encryption process of plain text
+function EncryptPlainText()
+{
+	var warnMsg = "<font color='red' >Error! generate or input parameters above first </font>";
+	if(parametersGenerated == 0)
+	{	
+		
+		document.getElementById("demo4").innerHTML = warnMsg;
+		ClearPTTextArea();
+	}
+	else
+	{
+		EncipherPlainText();		
+	}
+	cipheredPTarr = [];
+	encryptedCT = [];
+				
+}
+
+//Convert plain text to cipher text and encrypt using parameters generated
+function EncipherPlainText()
+{
+	var pTnoSpace ="";
+	var cipheredPT = "";
+	var isLetter = /[a-zA-Z]+/;
+	var plainText = document.getElementById("txtPlainText").value;
+	plainText = plainText.replace(/\s/g, "");
+	if(isLetter.test(plainText) == false)
+	{
+		document.getElementById("PTencryptWarn").innerHTML = "<br/><font color='red'>Error! Input letters only, spell out numbers if necessary.</font>";
+	}
+	else
+	{
+		document.getElementById("PTencryptWarn").innerHTML = "<b>ENCRYPTION SOLUTION</b> <br/>PLAINTEXT NUM:";
+		for(var i = 0; i<plainText.length; i++)
+		{
+			if(plainText[i] != " ")
+			{
+				cipheredPTarr.push(parseInt(plainText[i], 36) - 9);
+			}
+			if(plainText[i] == 0)
+			{
+				document.getElementById("PTencryptWarn").innerHTML += plainText[i].toUpperCase() +" = " + cipheredPTarr[i];
+			}
+			else{
+				document.getElementById("PTencryptWarn").innerHTML += ", " + plainText[i].toUpperCase() +" = " + cipheredPTarr[i];
+			}			
+		}
+		for(var j = 0; j<cipheredPTarr.length; j++)
+		{
+			CT.push(RSAencrypt(cipheredPTarr[j]));
+		}
+		document.getElementById("demo4").innerHTML += "<br/><b>ENCRYPTED MESSAGE NUMBERS: " + encryptedCT + "</b>";
+	}	
+}
+
+//Encryption function
+function RSAencrypt(num)
+{
+	var powers = 0;
+	var e = pubKey;
+	var m = num;
+	var mod1 = mod;
+	var modResult1 = new Array();
+	var CTnum = 0;
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>BINARY EXPONENTIATION OF PLAINTEXT NUM: " + m;
+	powerCalc(m, e, mod1);
+	totalPowerSum(m, e, mod1);
+	totalPowerCalc(m, e, mod1);
+	productTotPwrMod(mod1);
+ 
+	//document.getElementById("PTencryptWarn").innerHTML += "<br/> ModResult items: " + modResult + "<br/>";
+	//document.getElementById("PTencryptWarn").innerHTML += "<br/>binary less than exponent (expos[]): " + expos;
+	//document.getElementById("PTencryptWarn").innerHTML += "<br/>Biray composition of exponent(expos2[]): " + expos2;
+	document.getElementById("PTencryptWarn").innerHTML += m + "<sup>" + e + "</sup> mod " + mod1 + " = " + totProduct; 
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>CIPHERTEXT NUM: " + totProduct + "<br/>";
+	
+	modResult =[];
+	expos = [];
+	expos2 = [];
+	//encryptedCT = [];
+	totPwrCalc = [];
+}
+
+function RSAdecrypt(num)
+{
+	var powers = 0;
+	var d = privateKey;
+	var m = num;
+	var mod1 = mod;
+	var modResult1 = new Array();
+	var CTnum = 0;
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>BINARY EXPONENTIATION OF PLAINTEXT NUM: " + m;
+	powerCalc(m, d, mod1);
+	totalPowerSum(m, d, mod1);
+	totalPowerCalc(m, d, mod1);
+	productTotPwrMod(mod1);
+
+	document.getElementById("PTencryptWarn").innerHTML += m + "<sup>" + d + "</sup> mod " + mod1 + " = " + totProduct; 
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>CIPHERTEXT NUM: " + totProduct + "<br/>";
+	
+	modResult =[];
+	expos = [];
+	expos2 = [];
+	//encryptedCT = [];
+	totPwrCalc = [];
+}
+
+//Calculate binary exponentiation of base modulo
+function powerCalc(base,exponent, modulus)
+{	
+	 var a = 1;
+     var counter = 0;
+	 var expo = exponent;
+     var result = base;
+	 var mod = modulus;
+	 var ans = 0;
+	 var modResult2 = new Array();
+
+     while (a < expo)//iterate while a is less that exponent, multiply a by 2 for binary iteration
+     {
+		if(counter == 1)
+		{
+			result = computePower(result, 2) % mod;			
+		}
+		else
+		{
+			result = result % mod;
+			counter++;
+		}
+		
+		modResult.push(result);
+		
+		document.getElementById("PTencryptWarn").innerHTML += "<br/> " + base + "<sup>" + a + "</sup> mod " + modulus + " = " + result;
+		
+		a=a*2;        
+     }
+}
+
+//Calculate base raised to binary composition of exponent modulo
+function totalPowerSum(base, expo, mod)
+{
+	var totCounter = 1;
+	var ex = expo;
+	var	totMod = expo;
+	while(totCounter <= ex)
+    {
+        expos.push(totCounter);
+        totCounter = totCounter * 2;
+		
+    }
+	//document.getElementById("PTencryptWarn").innerHTML += "<br/>expos before sort: " + expos;
+	expos.sort(function(a, b){return b-a});
+	//document.getElementById("PTencryptWarn").innerHTML += "<br/>expos after sort: " + expos;
+	
+	for(var i=0; i<expos.length; i++)
+	{
+		
+		if(expos[i] > totMod)
+		{
+		
+		}
+		else
+		{			
+			expos2.push(expos[i]);
+			
+			totMod = totMod - expos[i];			
+		}
+	}
+	document.getElementById("PTencryptWarn").innerHTML += "<br/> BINARY EXPONENT COMPOSITION OF PUBLIC KEY: " + pubKey + " <br/>" + base + "<sup>" + expo + "</sup> mod " + mod + " = ";
+	for(var k = 0; k<expos2.length; k++)
+	{
+		if(k == 0)
+		{
+			document.getElementById("PTencryptWarn").innerHTML += base + "<sup>" +expos2[k]+"</sup> mod " + mod;
+		}
+		else
+		{
+			document.getElementById("PTencryptWarn").innerHTML += " * "+ base + "<sup>" +expos2[k]+"</sup> mod " + mod;
+		}
+		
+	}
+}
+
+
+//Calculates total of base raised to exponential composition modulo e.g. 2^3 mod 5 = 2 mod 5 * 2^2 mod 5 = 8 mod 5 
+function totalPowerCalc(base, expo, mod)
+{
+	var x = 1;
+	var totPwrCounter = 0;
+	var totPwrRslt = base;
+	var totPwrExpo = expo;
+	var totPwrMod = mod;
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>" + base + "<sup>" + expo + "</sup> mod " + mod + " = ";
+	while(x<totPwrExpo)
+	{
+		if(totPwrCounter == 1)
+		{
+			totPwrRslt = computePower(totPwrRslt, 2) % totPwrMod;
+		
+		}
+		else
+		{
+			totPwrRslt = totPwrRslt % totPwrMod;
+			totPwrCounter++;
+		}
+		for(var k=0; k<expos2.length; k++)
+		{
+			if(expos2[k] == x)
+			{
+				totPwrCalc.push(totPwrRslt);
+			}
+		}
+		x = x* 2;				
+	}
+	for(var h = totPwrCalc.length - 1; h>=0; h--)
+	{
+		if(h == totPwrCalc.length - 1)
+		{
+			document.getElementById("PTencryptWarn").innerHTML += "(" + totPwrCalc[h];
+		}
+		else
+		{
+		document.getElementById("PTencryptWarn").innerHTML += " * " + totPwrCalc[h];
+		}
+		
+	}
+	document.getElementById("PTencryptWarn").innerHTML +=  ") mod " + mod + "<br/>";
+}
+
+function productTotPwrMod(mod)
+{
+	totProduct = 1;
+	
+	for(var n = 0; n<totPwrCalc.length; n++)
+	{
+		totProduct = (totProduct * totPwrCalc[n])% mod;
+	}
+	encryptedCT.push(totProduct);
+	
+}
+
+function inputParamClear(){
+	document.getElementById("txtPrime1").value = '';
+	document.getElementById("txtPrime2").value = '';
+	document.getElementById("txtMod").value = '';
+	document.getElementById("txtThetaN").value = '';
+	document.getElementById("txtPubKey").value = '';
+	document.getElementById("txtPrivateKey").value = '';
+}
+
+//Dynamic exponentiation
+function computePower(num, exponent) {
+      var result = 1;
+      for (i = 0; i < exponent; i++) {
+      result *= num;
+      }
+      return result;
+  } 
+ 
+function inputParam(){
+		primeNum1 = '';
+		primeNum2 = '';
+		mod = '';
+		thetaN = '';
+		pubKey = '';
+		privateKey = '';
+		parametersGenerated = 0;
+		
+		document.getElementById("prime1").innerHTML = '';
+		document.getElementById("prime2").innerHTML = '';
+		document.getElementById("lblMod").innerHTML = '';	
+		document.getElementById("lblThetaN").innerHTML = '';
+	    document.getElementById("lblPubKey").innerHTML = '';
+		document.getElementById("lblPrivateKey").innerHTML = '';
+		document.getElementById("PTencryptWarn").innerHTML = '';
+		document.getElementById("demo3").innerHTML = '';
+		
+		primeNum1 = document.getElementById("txtPrime1").value;
+		primeNum2 = document.getElementById("txtPrime2").value;		
+		pubKey = document.getElementById("txtPubKey").value;
+		privateKey = document.getElementById("txtPrivateKey").value;
+		
+		//ensure fields are filled
+		if(primeNum1 == ''||primeNum2 == '')
+		{
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Please fill both prime1 and prime2 fields.</font>";
+		}
+		else if(checkIfPrimeNum(primeNum1) == false)
+		{				
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+primeNum1+" is not a prime number.</font>";
+		}
+		else if(checkIfPrimeNum(primeNum1) == false)
+		{
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+primeNum2+" is not a prime number.</font>";						
+		}
+		else if(pubKey == '')
+		{
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Please fill public key fields.</font>";
+		}
+		else
+		{
+			/*
+			//Check prime1 is prime
+			if(checkIfPrimeNum(primeNum1) == false)
+			{
+				document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+primeNum1+" is not a prime number.</font>";
+			}
+			//Check prime2 is prime
+			else if(checkIfPrimeNum(primeNum2) == false)
+			{
+				document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+primeNum2+" is not a prime number.</font>";
+			}
+			//calculate thetaN and modulo if prime1 and prime2 are valid
+			else
+			{*/
+				thetaN = (primeNum1 - 1) * (primeNum2 - 1);
+				mod = primeNum1 * primeNum2;
+				
+				document.getElementById("txtMod").value = mod;
+				document.getElementById("txtThetaN").value = thetaN;
+			//}
+			//ensure public key is valid 
+			if(isPubKeyValid(pubKey, thetaN) == false)
+			{
+				document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+PubKey+" is not a valid public key based on supplied parameters.</font>";
+			}
+			//ensure private key is valid
+			else
+			{
+				privateKey = GetPrivateKey(pubKey, thetaN);
+				document.getElementById("txtPrivateKey").value = privateKey;
+				document.getElementById("demo2").innerHTML = "<br/><font color='green'>Parameters Saved</font>";
+				
+				parametersGenerated = 1;
+			}
+		}		
+}
+
+function checkIfPrimeNum(primeNum){
+
+	var a1 = 2;
+	var c1 = 0;
+	var primeNumTest = new Array();
+	var primeTest = false;
+	if(primeNum == 2||primeNum == 1)
+	{
+		primeTest = true;
+	}
+	else
+	{
+		while(a1 < primeNum)
+		{
+			//document.getElementById("demo2").innerHTML += "<br/><font color='red'>a1: "+a1+"</font>";
+			
+			c1 = primeNum / a1;
+			//document.getElementById("demo2").innerHTML += "<br/><font color='red'>" + primeNum + " / " + a1 + " = " + c1 +"</font>";
+			
+			if(primeNum % a1 == 0)
+			{
+				primeNumTest.push(c1);
+				//document.getElementById("demo2").innerHTML += "<br/><font color='red'>primeNumTest.push("+c1+")</font>";
+			}
+		
+			
+		
+			a1 = a1 + 1;	
+		}
+		if(primeNumTest.length == 0)
+		{
+				
+			primeTest = true;			
+		}
+	}
+	//document.getElementById("demo2").innerHTML += "<br/><br/><font color='red'>PrimeNumTest length: " + primeNumTest.length + "</font>";
+	//document.getElementById("demo2").innerHTML += "<br/><font color='red'>PrimeTest result: " + primeTest + "</font>";
+	primeNumTest = [];
+
+	return primeTest;
+}
+
+function isPubKeyValid(publicKey, ThetN){
+	var pkey = publicKey;
+	var tN = ThetN;
+	var pubkeyIsValid = false;
+	var gcdVal = 0;
+	if(pkey <= 1||pkey >= tN)
+	{	
+		document.getElementById("demo2").innerHTML = "<font color='red'>Error! Public key must be greater than 1 and less than theta(n)</font>";
+	}	
+	else{
+	
+		gcdVal = GetGCD(publicKey, ThetN);
+		if(gcdVal != 1)
+		{
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! GCD("+pkey+", "+tN+") not equal to 1";
+		}
+		else{
+			pubkeyIsValid = true;
+		}
+	}
+	return pubkeyIsValid;
+}
+
+function clearCTTextArea(){
+	document.getElementById("txtCipherText").value = '';
+
+}
+
+function decryptCipherText(){
+	var cipherTextInput = /^(?:\s*\d+\s*(?:,|$))+$/;		
+	var inputTestVal = document.getElementById("txtCipherText").value;
+		
+		
+	if(parametersGenerated != 1)
+	{
+		document.getElementById("demo4").innerHTML = "<font color='red'>Error! generate or input parameters above first</font>";
+	}
+	else{
+		if(cipherTextInput.test(inputTestVal) == false ||inputTestVal == '')
+		{
+			document.getElementById("demo4").innerHTML += "<br/><font color='red'>Error! Cipher text cannot be empty or contain values other than numbers separated by comma</font>";
+		}
+		else{
+			document.getElementById("PTencryptWarn").innerHTML = "<br/><b>DECRYPTION SOLUTION:</b>";
+			inputTestVal = inputTestVal.replace(/\s/g, "");
+			inputTestVal = inputTestVal.split(",");
+			for (var i = inputTestVal.length;i--; ) {
+			   var tmp = parseFloat(inputTestVal[i]);
+			   inputTestVal[i] = (!isNaN(tmp)) ? tmp: inputTestVal[i].replace(/['"]/g,"");
+			}
+			document.getElementById("PTencryptWarn").innerHTML += "<br/> CIPHER TEXT NUM: ";
+			for(var i = 0; i<inputTestVal.length; i++)
+			{
+				if(i == 0)
+				{
+					document.getElementById("PTencryptWarn").innerHTML += inputTestVal[i];
+				}
+				else
+				{
+					document.getElementById("PTencryptWarn").innerHTML += ", " + inputTestVal[i];
+				}
+			}
+		}	
+		for(var k = 0; k< inputTestVal.length; k++)
+		{
+			CT.push(RSAdecrypt(inputTestVal[k]));
+		}
+		document.getElementById("demo4").innerHTML += "<br/><b>DECRYPTED MESSAGE NUMBERS: " + encryptedCT + "</b>";
+		document.getElementById("demo4").innerHTML += "<br/><b>DECRYPTED MESSAGE: </b>";
+		for(var j = 0; j<encryptedCT.length; j++)
+		{
+			
+			document.getElementById("demo4").innerHTML += "<b>"+ num2txt(encryptedCT[j]) + " </b>";
+		}
+		
+	}	
+	cipheredPTarr = [];
+	encryptedCT = [];
+}
+function num2txt(num)
+{
+	return String.fromCharCode(num + 96);
+}
+
+jQuery(document).ready(function() {
+jQuery('.tabs .tab-links a').on('click', function(e)  {
+var currentAttrValue = jQuery(this).attr('href');
+// Show/Hide Tabs
+jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
+// Change/remove current tab to active
+jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+e.preventDefault();
+});
+});
+</script>
+<style>
+* {
+    box-sizing: border-box;
+}
+header{
+	font: Sans-serif;
+	text-align: center;
+	vertical-align: middle;
+	margin: 0;
+	margin-top:0;
+	color: white;
+	background-image: url("code-background.png");
+	background-size: cover;
+	overflow: auto;
+	/*background-image: url("zerosOnes.jpg");*/
+	
+}
+body {
+    margin: 0;
+
+}
+
+input{
+	margin-bottom: 5px;
+	margin-right: 3px;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+    float: left;
+    width: 50%;
+    padding: 10px;
+	text-align: center;	
+	padding-top: 5x;
+	
+}
+
+.column2 {
+    float: left;
+    width: 50%;
+	height: 275px;
+    padding: 10px;
+	text-align: left;
+	overflow: auto;
+	margin-top: 0;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+
+}
+.sansserif
+{
+	font-family: Arial, Helvetica, sans-serif;
+}
+.label2{
+    display: inline-block;
+    float: left;
+    clear: left;
+    width: 130px;
+    text-align: left;
+}
+input {
+  display: inline-block;
+  float: left;
+}
+.center {
+    margin: auto;
+    width: 80%;
+    /*border: 1px solid;*/
+    padding: 8px;
+	background-color: white;
+	overflow: auto;
+	padding-top: 0;
+	
+}
+.content{
+	margin-top:0px;
+	background-color: #cccccc;
+	
+}
+footer { 
+	text-align: center;
+	font-size: 10px;
+    display: block;
+	background-color: #F0F0F0;
+	overflow: auto;
+}
+ul{
+	padding: 0;
+	margin-bottom: 0;
+
+}
+.tabs {
+	padding: 0;
+	margin-bottom: -10px;
+	overflow: auto;
+	width:100%;
+	display:inline-block;
+}
+
+
+/*----- Tab Links -----*/
+/* Clearfix */
+
+.tab-links:after {
+	display:block;
+	clear:both;
+	content:'';
+}
+.tab-links li {
+	margin:0;
+	float:left;
+	list-style:none;
+	overflow: auto;
+	padding: 5;
+}
+.tab-links a {
+	padding:9px 27.5px;
+	display:inline-block;
+	border-radius:3px 3px 0px 0px;
+	background:white;
+	font-size:16px;
+	font-weight:600;
+	color:#4c4c4c;
+	transition:all linear 0.15s;
+	overflow: auto;
+	margin-bottom: -4px;
+}
+.tab-links a:hover {
+	background:#a7cce5;
+	text-decoration:none;
+}
+li.active a, li.active a:hover {
+	background:#F8F8F8;;
+	color:#4c4c4c;
+}
+
+/*----- Content of Tabs -----*/
+.tab-content {
+	padding:0px;
+	border-radius:3px;
+	background:#fff;
+	margin-left: 0;
+	padding-left: 0;
+	padding-top: 0px;
+    width: 80%;
+	content-align: left;
+
+}
+.tab {
+	float: left;
+    width: 60%;
+	height: 300px;
+    padding: 10px;
+	padding-top: 5px;
+	padding-bottom: 0px;
+	padding-left: 25px;
+	text-align: left;
+	overflow: auto;
+	margin-top: 0;
+	display:none;
+	margin-bottom: 5px;
+
+}
+.tab.active {
+	float: left;
+    width: 60%;
+	height: 300px;
+    padding: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 25px;
+	text-align: left;
+	overflow: auto;
+	margin-top: 0;
+	display:block;
+	margin-bottom: 5px;
+}
+.row{
+	padding-bottom: 10px;
+	
+}
+.errorMsg{
+	padding-bottom: 3px;
+	margin-bottom: 3px;
+}
+
+.label2.button
+{
+	display: inline-block;
+    float: left;
+    clear: left;
+	width: 300px;
+	padding-left: 100px;
+    text-align: center;	
+}
+
+.generateParamLbl{
+	display: inline-block;
+    float: left;
+}
+
+.label3
+{
+	display: inline-block;
+    float: left;
+    clear: left;
+    width: 500px;
+    text-align: left;
+}
+.input2{
+	display: inline-block;
+    float: left;
+	margin-bottom: 5px;
+	margin-right: 3px;
+}
+#my-div
+{
+    width    : 50%;
+    height   : 300px;
+    overflow : hidden;
+    position : relative;
+}
+
+#my-iframe
+{
+    position : relative;
+	overflow-x: hidden;
+    width    : 52%;
+    height   : 300px;
+}
+
+</style>
+</head>
+
+<body class="sansserif">
+<header >
+	<h1 >RSA Crypto System</h1>
+</header>
+<div class="content">
+	<div class="center">
+		<div class="row">
+			<div class="tabs">
+				<ul class="tab-links">
+					<li class="active"><a href="#tab1">Generate Parameters</a></li>
+					<li><a href="#tab2">Input Your Own Parameters</a></li>
+				</ul>
+				
+			<div id="paramDiv" class="tab-content">
+			<div id="tab1" class="tab active" style="background-color:#F8F8F8;">
+				<h3>Generate RSA Parameters</h3>
+				Enter limit for prime numbers (e.g. 100): 
+				<br/>
+				<input type="text" id="Limit">
+					<button type="button" onclick="myFunction()">
+						Generate and use parameters
+					</button>
+
+				<p id="demo1" class="errorMsg"></p>		
+				<label class="label2">prime 1(p): </label><label id="prime1" class="generateParamLbl"></label><br/>
+				<label class="label2">prime 2(q): </label><label id="prime2" class="generateParamLbl"></label><br/>
+				<label class="label2">Modulo (p*q): </label><label id="lblMod" class="generateParamLbl"></label><br/>
+				<label class="label2">Theta(n): </label><label id="lblThetaN" class="generateParamLbl"></label><br/>
+				<label class="label2">Public Key (e): </label><label id="lblPubKey" class="generateParamLbl"></label><br/>
+				<label class="label2">Private Key (d): </label><label id="lblPrivateKey" class="generateParamLbl"></label><br/>
+				<p id="demo3" class="label3"></p><br/>
+			</div>
+			<div id="tab2" class="tab" style="background-color:#F8F8F8;">
+				<h3>Input parameters</h3>
+				<div>
+					<label class="label2">prime 1(p): </label><input id="txtPrime1" class="input2"><br/>
+					<label class="label2">prime 2(q): </label><input id="txtPrime2" class="input2"><br/>
+					<label class="label2">Modulo (p*q): </label><input id="txtMod" class="input2"  style="background-color:#F8F8F8; border: none;" disabled><br/>
+					<label class="label2">Theta(n): </label><input id="txtThetaN" class="input2" style="background-color:#F8F8F8; border: none;" disabled><br/>
+					<label class="label2">Public Key (e): </label><input id="txtPubKey" class="input2"></label><br/>
+					<label class="label2">Private Key (d): </label><input id="txtPrivateKey" class="input2" style="background-color:#F8F8F8; border: none;" disabled>
+					<br/>
+					<div class="label2 button">
+						<button  type="button" style="width:60px;" onclick="inputParam()">Submit</button>
+						<button  type="button" style="width:60px;" onclick="inputParamClear()">Clear</button>
+					</div>
+					<p id="demo2" class="label3"></p>		
+				</div>
+
+			</div>
+			</div>
+			<div class="my-div">
+				<iframe src="https://en.wikipedia.org/wiki/RSA_(cryptosystem)" id="my-iframe" style="overflow-x:hidden;overflow-y:scroll;"></iframe>
+				<!---<object type="text/html" data="http://www.iwcsync.org/news" width="50%" height="300px" style="overflow:auto;">-->
+				<!--</object>-->
+			</div>
+						
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="column" style="border-width:1px;background-color:#F8F8F8;" >
+			
+						<h3>Enter plain text message to encrypt:</h3>
+						<textarea id="txtPlainText" rows="10" cols="50" ></textarea>
+						<br/>
+						<br/>
+
+						<button id="btnEncryptPT" onclick="EncryptPlainText()" >
+							Encrypt Message
+						</button>
+						<button id="btnClearPT" onclick="ClearPTTextArea()" >
+							Clear
+						</button>
+					
+			</div>
+			
+			<div class="column" style="border-width:1px; background-color:#F8F8F8;">
+						<h3>Enter cipher text numbers to decrypt:</h3>
+						<textarea id="txtCipherText" rows="10" cols="50" ></textarea>
+						<br/>
+						<br/>
+						<button id="btnDecryptCT" onclick="decryptCipherText()" >
+							Decrypt Cipher text numbers
+						</button>
+						<button id="btnClearCT" onclick="clearCTTextArea()" >
+							Clear
+						</button>
+						
+			</div>			
+		</div>
+
+	<div>
+		<p id="demo4" style="padding-top: 3px;"></p>
+		<p id="PTencryptWarn"></p>
+		<p id="demo"></p>
+		<p id="testMSG"></p>	
+	</div>
+	</div>
+</div>
+<footer>
+  <p>Posted by: Ralph Dagomboy</p>
+  <p><font color="red">Disclaimer:</font> <br/>The purpose of this site is to help students understand the theory behind RSA system by showing the solutions of modular exponentiation based on generated parameters or their own inputs.</p>
+  <p>Contact information: <a href="darkstar_v378@yahoo.com">
+  darkstar_v378@yahoo</a>.</p>
+</footer>
+</body>
+</html>
