@@ -236,7 +236,7 @@ function EncipherPlainText()
 	}
 	else
 	{
-		document.getElementById("PTencryptWarn").innerHTML = "<b>ENCRYPTION SOLUTION</b> <br/>PLAINTEXT NUM:";
+		document.getElementById("PTencryptWarn").innerHTML = "<b>ENCRYPTION SOLUTION</b> <br/>TEXT NUMBERS:";
 		for(var i = 0; i<plainText.length; i++)
 		{
 			if(plainText[i] != " ")
@@ -295,7 +295,7 @@ function RSAdecrypt(num)
 	var mod1 = mod;
 	var modResult1 = new Array();
 	var CTnum = 0;
-	document.getElementById("PTencryptWarn").innerHTML += "<br/>BINARY EXPONENTIATION OF PLAINTEXT NUM: " + m;
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>BINARY EXPONENTIATION OF TEXT NUM: " + m;
 	powerCalc(m, d, mod1);
 	totalPowerSum(m, d, mod1);
 	totalPowerCalc(m, d, mod1);
@@ -372,7 +372,7 @@ function totalPowerSum(base, expo, mod)
 			totMod = totMod - expos[i];			
 		}
 	}
-	document.getElementById("PTencryptWarn").innerHTML += "<br/> BINARY EXPONENT COMPOSITION OF PUBLIC KEY: " + pubKey + " <br/>" + base + "<sup>" + expo + "</sup> mod " + mod + " = ";
+	document.getElementById("PTencryptWarn").innerHTML += "<br/> BINARY EXPONENT COMPOSITION OF KEY: " + pubKey + " <br/>" + base + "<sup>" + expo + "</sup> mod " + mod + " = ";
 	for(var k = 0; k<expos2.length; k++)
 	{
 		if(k == 0)
@@ -1020,7 +1020,7 @@ li.active a, li.active a:hover {
 </div>
 <footer>
   <p>Posted by: Ralph Dagomboy</p>
-  <p><font color="red">Disclaimer:</font> <br/>The purpose of this site is to help students understand the theory behind RSA system by showing the solutions of modular exponentiation based on generated parameters or their own inputs.</p>
+  <p><font color="red">Disclaimer:</font> <br/>The purpose of this site is to help students understand the theory behind RSA cryptosystem by showing the solutions of modular exponentiation based on generated parameters or their own inputs.</p>
   <p>Contact information: <a href="darkstar_v378@yahoo.com">
   darkstar_v378@yahoo</a>.</p>
 </footer>
