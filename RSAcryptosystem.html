@@ -18,13 +18,14 @@
 	var mod = 0;
 	var thetaN = 0;
 	var primeLimit = 0; 
-    var modResult = new Array();
-
+    	var modResult = new Array();
 	var expos = new Array();
 	var expos2 = new Array();
 	var totPwrCalc = new Array();
 	var encryptedCT = new Array();
-	
+	var expoKey;
+	var ctPt;
+	var currentKey;
 //Main function	
 function myFunction() {	
 	var a = 2;
@@ -50,7 +51,8 @@ function myFunction() {
 	//Ensure that user has input a limit of prime numbers to be generated to avoid system from crashing
 	if(document.getElementById("Limit").value == "" ||document.getElementById("Limit").value < 3||isInteger.test(document.getElementById("Limit").value) == false)
 	{
-		message = "<font color='red'>Error! Please enter an integer >= 100</font>";
+		message = "<font color='red'>Error! Please enter an integer >= 100</font>";//display warning message
+		//Clear all fields
 		document.getElementById("demo1").innerHTML = message;
 		primeNum1 = '';
 		primeNum2 = '';
@@ -67,12 +69,13 @@ function myFunction() {
 	}	
 	else//If user did input a limit
 	{
-		document.getElementById("demo1").innerHTML = "";
-			
-		primeLimit = document.getElementById("Limit").value;
-		
+		//Display Primes generated header
+		document.getElementById("demo1").innerHTML = "";			
+		primeLimit = document.getElementById("Limit").value;		
 		PrimeGenerateMSG = "PRIME NUMBERS < " + primeLimit + "<br/>";
 		document.getElementById("demo").innerHTML = PrimeGenerateMSG;
+		
+		//Generate prime numbers less than the user's inputed limit
 		while(a<primeLimit)
 		{
 			for(var b = 2; b < a ; b++)
@@ -80,40 +83,63 @@ function myFunction() {
 				c = a/b;
 				if(a%b == 0)
 				{
-					numbers.push(c)
+					numbers.push(c)//If reminder of a/b = 0, save it on numbers array
 				}
 			}
-			
+			//If numbers array length is 0, Prime numbers will 0 elements on numbers array
 			if(numbers.length == 0)
 			{
-				prime.push(a);
-				document.getElementById("demo").innerHTML += a + "<br/>";
+				prime.push(a);//Add a to prime array
+				document.getElementById("demo").innerHTML += a + "<br/>";//display a
 			}
-			numbers = [];
+			numbers = [];//clear numbers for next iteratin of a
 			++a;
-		}
+		}//Generate prime numbers end
+		
+		//Generate a random numbers to be used as index for random selection of prime1 and prime2 
 		random1 = Math.floor(Math.random() * prime.length);
 		random2 = Math.floor(Math.random() * prime.length);
+		
+		//ensure that random numbers generated are not equal to avoid selecting the same prime numbers
 		while(random1 == random2)
 		{
 			random2 = Math.floor(Math.random() * prime.length);
 		}
-		primeNum1 = prime[random1];
-		primeNum2 = prime[random2];						
+		
+		primeNum1 = prime[random1];//Select prime1 using random1 as index from primes array
+		primeNum2 = prime[random2];//Select prime2 using random2 as index from primes array	
+		
+		//Display primes 1 and 2
 		document.getElementById("prime1").innerHTML = primeNum1;
-		document.getElementById("prime2").innerHTML = primeNum2;		
-		mod = primeNum1 * primeNum2;				
-		document.getElementById("lblMod").innerHTML = mod;		
-		thetaN = (primeNum1 - 1) * (primeNum2 - 1);		
-		document.getElementById("lblThetaN").innerHTML = thetaN;		
+		document.getElementById("prime2").innerHTML = primeNum2;
+
+		//Calculate the modulo by multiplying prime1 and prime2
+		mod = primeNum1 * primeNum2;
+
+		//Display modulo
+		document.getElementById("lblMod").innerHTML = mod;
+
+		//Calculate theta(n) using formula (p-1)(q-1)
+		thetaN = (primeNum1 - 1) * (primeNum2 - 1);
+
+		//Display theta(n)
+		document.getElementById("lblThetaN").innerHTML = thetaN;	
+
+		//Generate public key
 		pubKey = GetPublicKey(thetaN);
-		while(pubKey == 1)
+		
+		while(pubKey == 1)//ensure public key is not equal to 1
 		{
 			pubKey = GetPublicKey(thetaN);
-		}		
+		}
+
+		//display public key
 		document.getElementById("lblPubKey").innerHTML = pubKey;		
+		
+		//Get public key and Modulo's greatest common denominator, which needs to be 1
 		pubKeyModGCD = GetGCD(pubKey, thetaN);
 		
+		//If public key and modulo's gcd not equal to 1, select a new public key and check the gcd again
 		if(pubKeyModGCD != 1)
 		{
 			pubKey = GetPublicKey(thetaN);
@@ -124,18 +150,19 @@ function myFunction() {
 			document.getElementById("lblPubKey").innerHTML = pubKey;		
 			pubKeyModGCD = GetGCD(pubKey, thetaN);
 		}
-		else
+		else//Generate private key
 		{
 			privateKey = GetPrivateKey(pubKey, thetaN)
-			while(privateKey == pubKey)
+			while(privateKey == pubKey)//ensure private key is not equal to the public key
 			{
 				privateKey = GetPrivateKey(pubKey, thetaN)
 			}
 			document.getElementById("lblPrivateKey").innerHTML = privateKey;
-			parametersGenerated = 1;	
+			//Change parametersGenerated to 1, this will be used as a condition to detect if user tries to 
+			//encrypt a plain text without saved parameters and a corresponding message will be displayed
+			parametersGenerated = 1; 	
 		}		
-					
-		document.getElementById("PTencryptWarn").InnerHTML += "<br/>" + "modResult: " + modResult;
+		//Notify user that parameters were saved					
 		document.getElementById("demo3").innerHTML = "<font color='green'>Parameters saved</font>";
 	}		
 }
@@ -206,6 +233,10 @@ function ClearPTTextArea()
 //Start the encryption process of plain text
 function EncryptPlainText()
 {
+	expoKey = "PUBLIC KEY";
+	ctPt = "CIPHERTEXT";
+	currentKey = 0;
+	
 	var warnMsg = "<font color='red' >Error! generate or input parameters above first </font>";
 	if(parametersGenerated == 0)
 	{	
@@ -236,7 +267,7 @@ function EncipherPlainText()
 	}
 	else
 	{
-		document.getElementById("PTencryptWarn").innerHTML = "<b>ENCRYPTION SOLUTION</b> <br/>TEXT NUMBERS:";
+		document.getElementById("PTencryptWarn").innerHTML = "<b>ENCRYPTION SOLUTION</b> <br/>PLAINTEXT NUM:";
 		for(var i = 0; i<plainText.length; i++)
 		{
 			if(plainText[i] != " ")
@@ -268,17 +299,15 @@ function RSAencrypt(num)
 	var mod1 = mod;
 	var modResult1 = new Array();
 	var CTnum = 0;
+
 	document.getElementById("PTencryptWarn").innerHTML += "<br/>BINARY EXPONENTIATION OF PLAINTEXT NUM: " + m;
 	powerCalc(m, e, mod1);
 	totalPowerSum(m, e, mod1);
 	totalPowerCalc(m, e, mod1);
 	productTotPwrMod(mod1);
- 
-	//document.getElementById("PTencryptWarn").innerHTML += "<br/> ModResult items: " + modResult + "<br/>";
-	//document.getElementById("PTencryptWarn").innerHTML += "<br/>binary less than exponent (expos[]): " + expos;
-	//document.getElementById("PTencryptWarn").innerHTML += "<br/>Biray composition of exponent(expos2[]): " + expos2;
+
 	document.getElementById("PTencryptWarn").innerHTML += m + "<sup>" + e + "</sup> mod " + mod1 + " = " + totProduct; 
-	document.getElementById("PTencryptWarn").innerHTML += "<br/>CIPHERTEXT NUM: " + totProduct + "<br/>";
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>" + ctPt +" NUM: " + totProduct + "<br/>";
 	
 	modResult =[];
 	expos = [];
@@ -287,6 +316,7 @@ function RSAencrypt(num)
 	totPwrCalc = [];
 }
 
+//Decrypt each plain text numbers
 function RSAdecrypt(num)
 {
 	var powers = 0;
@@ -295,14 +325,14 @@ function RSAdecrypt(num)
 	var mod1 = mod;
 	var modResult1 = new Array();
 	var CTnum = 0;
-	document.getElementById("PTencryptWarn").innerHTML += "<br/>BINARY EXPONENTIATION OF TEXT NUM: " + m;
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>BINARY EXPONENTIATION OF CIPHERTEXT NUM: " + m;
 	powerCalc(m, d, mod1);
 	totalPowerSum(m, d, mod1);
 	totalPowerCalc(m, d, mod1);
 	productTotPwrMod(mod1);
 
 	document.getElementById("PTencryptWarn").innerHTML += m + "<sup>" + d + "</sup> mod " + mod1 + " = " + totProduct; 
-	document.getElementById("PTencryptWarn").innerHTML += "<br/>CIPHERTEXT NUM: " + totProduct + "<br/>";
+	document.getElementById("PTencryptWarn").innerHTML += "<br/>" + ctPt + " NUM: " + totProduct + "<br/>";
 	
 	modResult =[];
 	expos = [];
@@ -342,7 +372,7 @@ function powerCalc(base,exponent, modulus)
      }
 }
 
-//Calculate base raised to binary composition of exponent modulo
+//Calculate base raised to binary composition of exponent mod modulo
 function totalPowerSum(base, expo, mod)
 {
 	var totCounter = 1;
@@ -354,16 +384,15 @@ function totalPowerSum(base, expo, mod)
         totCounter = totCounter * 2;
 		
     }
-	//document.getElementById("PTencryptWarn").innerHTML += "<br/>expos before sort: " + expos;
+
 	expos.sort(function(a, b){return b-a});
-	//document.getElementById("PTencryptWarn").innerHTML += "<br/>expos after sort: " + expos;
 	
 	for(var i=0; i<expos.length; i++)
 	{
 		
 		if(expos[i] > totMod)
 		{
-		
+			//do nothing
 		}
 		else
 		{			
@@ -372,7 +401,15 @@ function totalPowerSum(base, expo, mod)
 			totMod = totMod - expos[i];			
 		}
 	}
-	document.getElementById("PTencryptWarn").innerHTML += "<br/> BINARY EXPONENT COMPOSITION OF KEY: " + pubKey + " <br/>" + base + "<sup>" + expo + "</sup> mod " + mod + " = ";
+	if(currentKey == 0)
+	{
+		document.getElementById("PTencryptWarn").innerHTML += "<br/> BINARY EXPONENT COMPOSITION OF "+ expoKey +": " + pubKey + " <br/>" + base + "<sup>" + expo + "</sup> mod " + mod + " = ";
+	}
+	else
+	{
+		document.getElementById("PTencryptWarn").innerHTML += "<br/> BINARY EXPONENT COMPOSITION OF "+ expoKey +": " + privateKey + " <br/>" + base + "<sup>" + expo + "</sup> mod " + mod + " = ";
+	}
+	
 	for(var k = 0; k<expos2.length; k++)
 	{
 		if(k == 0)
@@ -432,7 +469,7 @@ function totalPowerCalc(base, expo, mod)
 	}
 	document.getElementById("PTencryptWarn").innerHTML +=  ") mod " + mod + "<br/>";
 }
-
+//Calculate total product of modulo result (cipher text number)
 function productTotPwrMod(mod)
 {
 	totProduct = 1;
@@ -445,6 +482,8 @@ function productTotPwrMod(mod)
 	
 }
 
+//Clear values of each fields of parameters user has entered
+//in input parameters div
 function inputParamClear(){
 	document.getElementById("txtPrime1").value = '';
 	document.getElementById("txtPrime2").value = '';
@@ -462,16 +501,22 @@ function computePower(num, exponent) {
       }
       return result;
   } 
- 
+
+//User inputs his own parameters instead of generating them
 function inputParam(){
+
+		//Clear previously saved values first
 		primeNum1 = '';
 		primeNum2 = '';
 		mod = '';
 		thetaN = '';
 		pubKey = '';
 		privateKey = '';
+		
+		//PramatersGenerated value is 0 since previous parameters have been cleared
 		parametersGenerated = 0;
 		
+		//Clear parameters displayed on generate parameters div
 		document.getElementById("prime1").innerHTML = '';
 		document.getElementById("prime2").innerHTML = '';
 		document.getElementById("lblMod").innerHTML = '';	
@@ -481,10 +526,11 @@ function inputParam(){
 		document.getElementById("PTencryptWarn").innerHTML = '';
 		document.getElementById("demo3").innerHTML = '';
 		
+		//Set values of prime1, prime2, public Key, based on user input
 		primeNum1 = document.getElementById("txtPrime1").value;
 		primeNum2 = document.getElementById("txtPrime2").value;		
 		pubKey = document.getElementById("txtPubKey").value;
-		privateKey = document.getElementById("txtPrivateKey").value;
+		//privateKey = document.getElementById("txtPrivateKey").value;
 		
 		//ensure fields are filled
 		if(primeNum1 == ''||primeNum2 == '')
@@ -505,26 +551,13 @@ function inputParam(){
 		}
 		else
 		{
-			/*
-			//Check prime1 is prime
-			if(checkIfPrimeNum(primeNum1) == false)
-			{
-				document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+primeNum1+" is not a prime number.</font>";
-			}
-			//Check prime2 is prime
-			else if(checkIfPrimeNum(primeNum2) == false)
-			{
-				document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+primeNum2+" is not a prime number.</font>";
-			}
-			//calculate thetaN and modulo if prime1 and prime2 are valid
-			else
-			{*/
-				thetaN = (primeNum1 - 1) * (primeNum2 - 1);
-				mod = primeNum1 * primeNum2;
+			//Calculate theta(n)
+			thetaN = (primeNum1 - 1) * (primeNum2 - 1);
+			mod = primeNum1 * primeNum2;
 				
-				document.getElementById("txtMod").value = mod;
-				document.getElementById("txtThetaN").value = thetaN;
-			//}
+			document.getElementById("txtMod").value = mod;
+			document.getElementById("txtThetaN").value = thetaN;
+
 			//ensure public key is valid 
 			if(isPubKeyValid(pubKey, thetaN) == false)
 			{
@@ -542,6 +575,7 @@ function inputParam(){
 		}		
 }
 
+//Check if the prime numbers entered by user are actually primes
 function checkIfPrimeNum(primeNum){
 
 	var a1 = 2;
@@ -555,20 +589,12 @@ function checkIfPrimeNum(primeNum){
 	else
 	{
 		while(a1 < primeNum)
-		{
-			//document.getElementById("demo2").innerHTML += "<br/><font color='red'>a1: "+a1+"</font>";
-			
+		{			
 			c1 = primeNum / a1;
-			//document.getElementById("demo2").innerHTML += "<br/><font color='red'>" + primeNum + " / " + a1 + " = " + c1 +"</font>";
-			
 			if(primeNum % a1 == 0)
 			{
 				primeNumTest.push(c1);
-				//document.getElementById("demo2").innerHTML += "<br/><font color='red'>primeNumTest.push("+c1+")</font>";
-			}
-		
-			
-		
+			}		
 			a1 = a1 + 1;	
 		}
 		if(primeNumTest.length == 0)
@@ -577,13 +603,11 @@ function checkIfPrimeNum(primeNum){
 			primeTest = true;			
 		}
 	}
-	//document.getElementById("demo2").innerHTML += "<br/><br/><font color='red'>PrimeNumTest length: " + primeNumTest.length + "</font>";
-	//document.getElementById("demo2").innerHTML += "<br/><font color='red'>PrimeTest result: " + primeTest + "</font>";
 	primeNumTest = [];
-
 	return primeTest;
 }
 
+//Check if the public key entered by user is actually valid using the condition 1 < public key < theta(n)
 function isPubKeyValid(publicKey, ThetN){
 	var pkey = publicKey;
 	var tN = ThetN;
@@ -595,7 +619,7 @@ function isPubKeyValid(publicKey, ThetN){
 	}	
 	else{
 	
-		gcdVal = GetGCD(publicKey, ThetN);
+		gcdVal = GetGCD(publicKey, ThetN);//Check if gcd of public key and theta(n) equals 1
 		if(gcdVal != 1)
 		{
 			document.getElementById("demo2").innerHTML = "<font color='red'>Error! GCD("+pkey+", "+tN+") not equal to 1";
@@ -604,37 +628,44 @@ function isPubKeyValid(publicKey, ThetN){
 			pubkeyIsValid = true;
 		}
 	}
-	return pubkeyIsValid;
+	return pubkeyIsValid;//return validity
 }
 
+//Clear decryption text area
 function clearCTTextArea(){
 	document.getElementById("txtCipherText").value = '';
 
 }
 
+//decrypt entered cipher text
 function decryptCipherText(){
 	var cipherTextInput = /^(?:\s*\d+\s*(?:,|$))+$/;		
 	var inputTestVal = document.getElementById("txtCipherText").value;
-		
-		
+		expoKey = "PRIVATE KEY";
+		ctPt = "PLAINTEXT";
+		currentKey = 1;
+	//check if there are parameters saved
 	if(parametersGenerated != 1)
 	{
 		document.getElementById("demo4").innerHTML = "<font color='red'>Error! generate or input parameters above first</font>";
 	}
 	else{
-		if(cipherTextInput.test(inputTestVal) == false ||inputTestVal == '')
+		if(cipherTextInput.test(inputTestVal) == false ||inputTestVal == '')//Ensure only numbers separated by comma are entered in the textbox using regex
 		{
 			document.getElementById("demo4").innerHTML += "<br/><font color='red'>Error! Cipher text cannot be empty or contain values other than numbers separated by comma</font>";
 		}
 		else{
 			document.getElementById("PTencryptWarn").innerHTML = "<br/><b>DECRYPTION SOLUTION:</b>";
-			inputTestVal = inputTestVal.replace(/\s/g, "");
-			inputTestVal = inputTestVal.split(",");
-			for (var i = inputTestVal.length;i--; ) {
-			   var tmp = parseFloat(inputTestVal[i]);
+			inputTestVal = inputTestVal.replace(/\s/g, "");//remove space and new line
+			inputTestVal = inputTestVal.split(",");//separate values with comma
+			for (var i = inputTestVal.length;i--; ) 
+			{
+			   var tmp = parseFloat(inputTestVal[i]);//parse each value
 			   inputTestVal[i] = (!isNaN(tmp)) ? tmp: inputTestVal[i].replace(/['"]/g,"");
 			}
 			document.getElementById("PTencryptWarn").innerHTML += "<br/> CIPHER TEXT NUM: ";
+			
+			//Display values saved
 			for(var i = 0; i<inputTestVal.length; i++)
 			{
 				if(i == 0)
@@ -646,20 +677,28 @@ function decryptCipherText(){
 					document.getElementById("PTencryptWarn").innerHTML += ", " + inputTestVal[i];
 				}
 			}
-		}	
+		}
+
+		//Decrypt each values of the cipher message num
 		for(var k = 0; k< inputTestVal.length; k++)
 		{
 			CT.push(RSAdecrypt(inputTestVal[k]));
 		}
+		
+		//Display decrypted plain text num
 		document.getElementById("demo4").innerHTML += "<br/><b>DECRYPTED MESSAGE NUMBERS: " + encryptedCT + "</b>";
 		document.getElementById("demo4").innerHTML += "<br/><b>DECRYPTED MESSAGE: </b>";
+		
+		//Convert each plain text num to letters and  display
 		for(var j = 0; j<encryptedCT.length; j++)
 		{
 			
 			document.getElementById("demo4").innerHTML += "<b>"+ num2txt(encryptedCT[j]) + " </b>";
 		}
 		
-	}	
+	}
+
+	//Clear data for next operations
 	cipheredPTarr = [];
 	encryptedCT = [];
 }
@@ -920,7 +959,7 @@ li.active a, li.active a:hover {
 
 <body class="sansserif">
 <header >
-	<h1 >RSA Cryptosystem</h1>
+	<h1 >RSA Crypto System</h1>
 </header>
 <div class="content">
 	<div class="center">
