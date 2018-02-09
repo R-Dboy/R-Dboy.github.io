@@ -633,7 +633,7 @@ function isPubKeyValid(publicKey, ThetN){
 		gcdVal = GetGCD(publicKey, ThetN);//Check if gcd of public key and theta(n) equals 1
 		if(gcdVal != 1)
 		{
-			document.getElementById("demo2").innerHTML = "<font color='red'>Error! GCD("+pkey+", "+tN+") not equal to 1</font>";
+			//document.getElementById("demo2").innerHTML = "<font color='red'>Error! GCD("+pkey+", "+tN+") not equal to 1</font>";
 		}
 		else{
 			pubkeyIsValid = true;
