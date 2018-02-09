@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Developer: Ralph Dagomboy -->
 <html>
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -18,7 +19,7 @@
 	var mod = 0;
 	var thetaN = 0;
 	var primeLimit = 0; 
-    	var modResult = new Array();
+    var modResult = new Array();
 	var expos = new Array();
 	var expos2 = new Array();
 	var totPwrCalc = new Array();
@@ -26,6 +27,7 @@
 	var expoKey;
 	var ctPt;
 	var currentKey;
+	var isInteger = /^[0-9]\d*$/;
 //Main function	
 function myFunction() {	
 	var a = 2;
@@ -40,7 +42,7 @@ function myFunction() {
 	var z = 1;
 	var pubKeyModGCD = 0;	
 	var PrimeGenerateMSG = "";
-	var isInteger = /^[0-9]\d*$/;//Regular expression for numeric digits only
+	//Regular expression for numeric digits only
 	parametersGenerated = 0;
 	
 	//Clear fields of inactive tab
@@ -164,6 +166,7 @@ function myFunction() {
 		}		
 		//Notify user that parameters were saved					
 		document.getElementById("demo3").innerHTML = "<font color='green'>Parameters saved</font>";
+		
 	}		
 }
 
@@ -536,18 +539,26 @@ function inputParam(){
 		if(primeNum1 == ''||primeNum2 == '')
 		{
 			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Please fill both prime1 and prime2 fields.</font>";
-		}
+		}		
+		else if(isInteger.test(primeNum1) == false||isInteger.test(primeNum2) == false)
+		{
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Prime1 and prime2 must be integers.</font>";
+		}		
 		else if(checkIfPrimeNum(primeNum1) == false)
 		{				
 			document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+primeNum1+" is not a prime number.</font>";
 		}
-		else if(checkIfPrimeNum(primeNum1) == false)
+		else if(checkIfPrimeNum(primeNum2) == false)
 		{
 			document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+primeNum2+" is not a prime number.</font>";						
 		}
 		else if(pubKey == '')
 		{
-			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Please fill public key fields.</font>";
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Please fill public key.</font>";
+		}
+		else if(isInteger.test(pubKey) == false)
+		{
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Public key must be an integer<br/>where gcd(public key, Theta(n)) = 1</font>";
 		}
 		else
 		{
@@ -561,7 +572,7 @@ function inputParam(){
 			//ensure public key is valid 
 			if(isPubKeyValid(pubKey, thetaN) == false)
 			{
-				document.getElementById("demo2").innerHTML = "<font color='red'>Error! "+PubKey+" is not a valid public key based on supplied parameters.</font>";
+				document.getElementById("demo2").innerHTML += "<font color='red'><br/>"+pubKey+" is not a valid public key. Generate parameters instead.</font>";
 			}
 			//ensure private key is valid
 			else
@@ -622,7 +633,7 @@ function isPubKeyValid(publicKey, ThetN){
 		gcdVal = GetGCD(publicKey, ThetN);//Check if gcd of public key and theta(n) equals 1
 		if(gcdVal != 1)
 		{
-			document.getElementById("demo2").innerHTML = "<font color='red'>Error! GCD("+pkey+", "+tN+") not equal to 1";
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! GCD("+pkey+", "+tN+") not equal to 1</font>";
 		}
 		else{
 			pubkeyIsValid = true;
@@ -1010,7 +1021,7 @@ li.active a, li.active a:hover {
 			</div>
 			</div>
 			<div class="my-div">
-				<iframe src="https://en.wikipedia.org/wiki/RSA_(cryptosystem)" id="my-iframe" allowfullscreen="" style="overflow-x:hidden;overflow-y:scroll;"></iframe>
+				<iframe src="https://en.wikipedia.org/wiki/RSA_(cryptosystem)" id="my-iframe" height="200" style="overflow-x:scroll;overflow-y:scroll;"></iframe>
 				<!---<object type="text/html" data="http://www.iwcsync.org/news" width="50%" height="300px" style="overflow:auto;">-->
 				<!--</object>-->
 			</div>
@@ -1059,10 +1070,10 @@ li.active a, li.active a:hover {
 	</div>
 </div>
 <footer>
-  <p>Developer: Ralph Dagomboy</p>
-  <p><font color="red">Disclaimer:</font> <br/>The purpose of this webpage is to help students understand the theory behind RSA cryptosystem by showing the solutions of modular exponentiation based on generated or supplied parameters.</p>
+  <p>Posted by: Ralph Dagomboy</p>
+  <p><font color="red">Disclaimer:</font> <br/>The purpose of this site is to help students understand the theory behind RSA system by showing the solutions of modular exponentiation based on generated parameters or their own inputs.</p>
   <p>Contact information: <a href="darkstar_v378@yahoo.com">
-  darkstar_v378@yahoo</a>.</p>
+  darkstar_v378@yahoo.com</a></p>
 </footer>
 </body>
 </html>
