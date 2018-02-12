@@ -554,11 +554,11 @@ function inputParam(){
 		}
 		else if(pubKey == '')
 		{
-			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Please fill public key feilds.</font>";
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Please fill public key.</font>";
 		}
 		else if(isInteger.test(pubKey) == false)
 		{
-			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Public key must be an integer</font>";
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! Public key must be an integer<br/>where gcd(public key, Theta(n)) = 1</font>";
 		}
 		else
 		{
@@ -579,7 +579,7 @@ function inputParam(){
 			{
 				privateKey = GetPrivateKey(pubKey, thetaN);
 				document.getElementById("txtPrivateKey").value = privateKey;
-				document.getElementById("demo2").innerHTML = "<font color='green'>Parameters Saved</font>";
+				document.getElementById("demo2").innerHTML = "<br/><font color='green'>Parameters Saved</font>";
 				
 				parametersGenerated = 1;
 			}
@@ -633,7 +633,7 @@ function isPubKeyValid(publicKey, ThetN){
 		gcdVal = GetGCD(publicKey, ThetN);//Check if gcd of public key and theta(n) equals 1
 		if(gcdVal != 1)
 		{
-			//document.getElementById("demo2").innerHTML = "<font color='red'>Error! GCD("+pkey+", "+tN+") not equal to 1</font>";
+			document.getElementById("demo2").innerHTML = "<font color='red'>Error! GCD("+pkey+", "+tN+") not equal to 1</font>";
 		}
 		else{
 			pubkeyIsValid = true;
@@ -656,9 +656,14 @@ function decryptCipherText(){
 		ctPt = "PLAINTEXT";
 		currentKey = 1;
 	//check if there are parameters saved
-	if(parametersGenerated != 1)
+	if(parametersGenerated == 0)
 	{
 		document.getElementById("demo4").innerHTML = "<font color='red'>Error! generate or input parameters above first</font>";
+	}
+	else if(parametersGenerated == 2)
+	{
+		document.getElementById("demo4").innerHTML = "<font color='red'>Error! Saved parameters are only applicable for message encryption.</font>";
+		document.getElementById("demo4").innerHTML += "<br/><font color='red'>Please input or generate complete parameters if you are decrypting.</font>";
 	}
 	else{
 		if(cipherTextInput.test(inputTestVal) == false ||inputTestVal == '')//Ensure only numbers separated by comma are entered in the textbox using regex
@@ -718,6 +723,56 @@ function num2txt(num)
 	return String.fromCharCode(num + 96);
 }
 
+function encryptParamClear()
+{
+	document.getElementById("txtModEncrypt").value = '';
+	document.getElementById("txtPubKeyEncrypt").value = '';
+}
+
+function encryptParam()
+{
+	//Clear previously saved values first
+		primeNum1 = '';
+		primeNum2 = '';
+		mod = '';
+		thetaN = '';
+		pubKey = '';
+		privateKey = '';
+		
+		//PramatersGenerated value is 0 since previous parameters have been cleared
+		parametersGenerated = 0;
+		
+		//Clear parameters displayed on generate parameters div
+		document.getElementById("prime1").innerHTML = '';
+		document.getElementById("prime2").innerHTML = '';
+		document.getElementById("lblMod").innerHTML = '';	
+		document.getElementById("lblThetaN").innerHTML = '';
+	    document.getElementById("lblPubKey").innerHTML = '';
+		document.getElementById("lblPrivateKey").innerHTML = '';
+		document.getElementById("PTencryptWarn").innerHTML = '';
+		document.getElementById("demo5").innerHTML = '';
+		
+		//Set values of prime1, prime2, public Key, based on user input
+		pubKey = document.getElementById("txtPubKeyEncrypt").value;
+		mod = document.getElementById("txtModEncrypt").value;
+		//privateKey = document.getElementById("txtPrivateKey").value;
+		
+		if(pubKey == ''||mod == '')
+		{
+			document.getElementById("demo5").innerHTML = "<font color='red'>Error! Please fill both modulo and public key fields.</font>";
+		}
+		else if(isInteger.test(pubKey) == false||isInteger.test(mod) == false)
+		{
+			document.getElementById("demo5").innerHTML += "<font color='red'>Error! Please use integer values only.</font>";
+		}
+		else
+		{
+			document.getElementById("demo5").innerHTML = "<font color='green'>Parameters saved.</font><br/>";
+			document.getElementById("demo5").innerHTML += "<br/><font color='orange'>Warning: Ensure that the public key and modulo are correct before proceeding to message encryption.</font>";
+			parametersGenerated = 2;
+		}
+}
+
 jQuery(document).ready(function() {
 jQuery('.tabs .tab-links a').on('click', function(e)  {
 var currentAttrValue = jQuery(this).attr('href');
@@ -746,7 +801,6 @@ header{
 	/*background-image: url("zerosOnes.jpg");*/
 	
 }
-
 body {
     margin: 0;
 
@@ -842,20 +896,22 @@ ul{
 	display:block;
 	clear:both;
 	content:'';
+	
 }
 .tab-links li {
 	margin:0;
 	float:left;
 	list-style:none;
 	overflow: auto;
-	padding: 5;
+	padding: 3;
+	width: 16%;//added#######################################################
 }
 .tab-links a {
 	padding:9px 27.5px;
 	display:inline-block;
 	border-radius:3px 3px 0px 0px;
 	background:white;
-	font-size:16px;
+	font-size:15px;
 	font-weight:600;
 	color:#4c4c4c;
 	transition:all linear 0.15s;
@@ -888,7 +944,7 @@ li.active a, li.active a:hover {
     width: 60%;
 	height: 300px;
     padding: 10px;
-	padding-top: 3px;
+	padding-top: 5px;
 	padding-bottom: 0px;
 	padding-left: 25px;
 	text-align: left;
@@ -903,8 +959,8 @@ li.active a, li.active a:hover {
     width: 60%;
 	height: 300px;
     padding: 10px;
-	padding-top: 3px;
-	padding-bottom: 0px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	padding-left: 25px;
 	text-align: left;
 	overflow: auto;
@@ -929,7 +985,7 @@ li.active a, li.active a:hover {
 	width: 300px;
 	padding-left: 100px;
     text-align: center;	
-	padding-bottom: 0px;
+	padding-bottom: 3px;
 }
 
 .generateParamLbl{
@@ -943,9 +999,8 @@ li.active a, li.active a:hover {
     float: left;
     clear: left;
     width: 500px;
-    text-align: left, center;
-	padding-top: 3px;
-	
+    text-align: left;
+	padding-top: 2px;
 }
 .input2{
 	display: inline-block;
@@ -955,7 +1010,7 @@ li.active a, li.active a:hover {
 }
 #my-div
 {
-    width    : 100%;
+    width    : 52%;
     height   : 300px;
     overflow : hidden;
     position : relative;
@@ -963,10 +1018,10 @@ li.active a, li.active a:hover {
 
 #my-iframe
 {
-   position : relative;
+    position : relative;
 	overflow-x: hidden;
 	overflow-y: hidden;
-    width    : 100%;
+    width    : 52%;
     height   : 300px;
 }
 
@@ -984,6 +1039,7 @@ li.active a, li.active a:hover {
 				<ul class="tab-links">
 					<li class="active"><a href="#tab1">Generate Parameters</a></li>
 					<li><a href="#tab2">Input Your Own Parameters</a></li>
+					<li><a href="#tab3">Encrypting Message Only</a></li>
 				</ul>
 				
 			<div id="paramDiv" class="tab-content">
@@ -1006,7 +1062,7 @@ li.active a, li.active a:hover {
 				<p id="demo3" class="label3"></p><br/>
 			</div>
 			<div id="tab2" class="tab" style="background-color:#F8F8F8;">
-				<h3>Input parameters</h3>
+				<h3>Input Parameters</h3>
 				<div>
 					<label class="label2">prime 1(p): </label><input id="txtPrime1" class="input2"><br/>
 					<label class="label2">prime 2(q): </label><input id="txtPrime2" class="input2"><br/>
@@ -1014,7 +1070,7 @@ li.active a, li.active a:hover {
 					<label class="label2">Theta(n): </label><input id="txtThetaN" class="input2" style="background-color:#F8F8F8; border: none;" disabled><br/>
 					<label class="label2">Public Key (e): </label><input id="txtPubKey" class="input2"></label><br/>
 					<label class="label2">Private Key (d): </label><input id="txtPrivateKey" class="input2" style="background-color:#F8F8F8; border: none;" disabled>
-					<br/>
+					
 					<div class="label2 button">
 						<button  type="button" style="width:60px;" onclick="inputParam()">Submit</button>
 						<button  type="button" style="width:60px;" onclick="inputParamClear()">Clear</button>
@@ -1023,9 +1079,22 @@ li.active a, li.active a:hover {
 				</div>
 
 			</div>
+			<div id="tab3" class="tab" style="background-color:#F8F8F8;">
+				<h3>Input Parameters to Encrypt Message</h3>
+				<div>
+					<label class="label2">Modulo (p*q): </label><input id="txtModEncrypt" class="input2"><br/>
+					<label class="label2">Public Key (e): </label><input id="txtPubKeyEncrypt" class="input2"></label><br/>					
+					<div class="label2 button">
+						<button  type="button" style="width:60px;" onclick="encryptParam()">Submit</button>
+						<button  type="button" style="width:60px;" onclick="encryptParamClear()">Clear</button>
+					</div>
+					<p id="demo5" class="label3"></p>		
+				</div>
+
 			</div>
-			<div class="my-div" style="-webkit-overflow-scrolling: touch; overflow: auto;" >
-				<iframe src="https://en.wikipedia.org/wiki/RSA_(cryptosystem)" id="my-iframe" height="300px" style="overflow-x:hidden;overflow-y:scroll;" height="300"></iframe>
+			</div>
+			<div class="my-div">
+				<iframe src="https://en.wikipedia.org/wiki/RSA_(cryptosystem)" id="my-iframe" height="300" style="overflow-x:hidden;overflow-y:scroll;"></iframe>
 				<!---<object type="text/html" data="http://www.iwcsync.org/news" width="50%" height="300px" style="overflow:auto;">-->
 				<!--</object>-->
 			</div>
