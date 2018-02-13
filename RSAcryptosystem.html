@@ -261,7 +261,7 @@ function EncipherPlainText()
 {
 	var pTnoSpace ="";
 	var cipheredPT = "";
-	var isLetter = /[a-zA-Z]+/;
+	var isLetter = /^[a-zA-Z]+$/;
 	var plainText = document.getElementById("txtPlainText").value;
 	plainText = plainText.replace(/\s/g, "");
 	if(isLetter.test(plainText) == false)
