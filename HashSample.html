@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--JavaScript Hash table demo-->
+<!--Developer: Ralph Dagomboy-->
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="/js/my.js"></script>
+<title>Hash Function</title>
+<script src="JSTest.js"></script>
+<style>
+	.sansserif
+	{
+		font-family: Arial, Helvetica, sans-serif;		
+	}
+	body{
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		align: center;
+		background-color: #cccccc;
+	}
+	header{
+		font: Sans-serif;
+		text-align: center;
+		vertical-align: middle;
+		margin: 0;
+		padding: 0;
+		margin-top:0;
+		overflow: auto;
+		background-color: gray;
+		background-image: url("grey.png");
+	}
+	.mainDiv{
+		font: Sans-serif;
+		text-align: center;
+		vertical-align: middle;
+		align: center;
+		//background-color: white;
+		margin: 0;
+		margin-top:10;
+		margin-bottom: 3px;
+		border: 1px;
+		padding:10px;
+		height: 100px;
+		overflow: hidden;
+	}
+	.label1
+	{
+		margin: 6px;
+	}
+	.label2.button
+	{
+		display: inline;
+		float: center-left;
+		clear: left;
+		width: 300px;
+		//padding-left: 100px;
+		text-align: center;	
+		padding-bottom: 5px;
+		margin: 0 auto;
+	}
+	.input1{
+		margin: 6px;		
+	}
+	.center {
+		margin: auto;
+		width: 60%;
+		/*border: 1px solid;*/
+		padding: 0;
+		background-color: white;
+		overflow: auto;
+		padding-top: 0;
+	
+	}
+	footer { 
+		text-align: center;
+		font-size: 10px;
+		display: block;
+		background-color: #F0F0F0;
+		overflow: auto;
+		position: relative;
+	}
+	.displayDiv{
+		font: Sans-serif;
+		text-align: left;
+		vertical-align: middle;
+		align: center;
+		background-color: white;
+		margin: 0;
+		border: 1px;
+		height: auto;
+		display:block;
+		height: 100%;
+		overflow:auto;
+		display: flex;
+		flex-flow: column;
+		min-height: 450px;
+		word-wrap: break-word;
+		padding: 9px;
+
+	}
+	table{
+		border-collapse: collapse;
+	}
+	
+	th, td{
+		border: 1px solid orange;
+		padding: 5px;
+		text-align: center;
+	}
+</style>
+</head>
+
+<body class="sansserif">
+<header>
+	<h1 style="color:white;">Hash Table Example Using Username and Password</h1>
+</header>
+<div style="overflow: auto;align: center;">
+	<div class="mainDiv" style="width:61%; margin:0 auto; overflow: auto; margin-top: 0px; clear: both; clear: both;">
+		<div style="float: left; border: thin; background-color: white; width: 50%;margin-left:0px; padding-right: 10px;padding-left: 12px; margin-top: -5px; height: 100%;">
+			<label class="label1">Username: </label><input id="txtInputUsername" class="input1" type="text"><br/>
+			<label class="label1">Password: </label><input id="txtInputPassword" class="input1" type="text"><br/>
+			<div class="label2 button" style="margin: 0 auto;">
+				<button type="button" style="width:120px;margin:5px;" onclick="myFunction()">Create Account</button><button type="button" style="width:120px;" onclick="logIn()">Log in</button>
+			</div>	
+		</div >
+		<div style="float: right;background-color: white; width: 45%;margin-left:0px; padding-right: 8px;padding-left: 12px; text-align: left; font-size: 12px; height: 95%; margin-top: -5px; padding-top: 5px;position:relative;">
+			
+			Hint(1): Create an account or multiple accounts <br/>
+			Hint(2): Username may only contain letters, numbers, and underscore</br>
+			Hint(3): Log-in using one of the accounts created
+		</div>
+		
+	</div>
+	<div class="displayDiv" style="width: 60%;margin: -10px auto 3px ;">
+		<p id="demo"></p>	
+		<label id="table"></label>
+		
+	</div>
+</div>
+<footer>
+  <p>Developer: Ralph Dagomboy</p>
+  <p><font color="red">Disclaimer:</font> <br/>The purpose of this web page is to demonstrate hash table using modulo pre-hash function to help students understand the theory by showing solutions of calculations.</p>
+  <p>Contact information: <a href="darkstar_v378@yahoo.com">
+  darkstar_v378@yahoo.com</a></p>
+</footer>
+</body>
+
+</html>
+
