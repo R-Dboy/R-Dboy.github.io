@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<!--Developer: Ralph Dagomboy-->
+<!--Disclaimer: This webpag is a mock-up. All information dispalyed are none
+	classified, may not be accurate, and were all acquired by searching google-->
+<html>
+<head>
+<title>PMS</title>
+<script >
+//transaction metadata object for history
+var transNum = 1;
+function transaction(id, type, metaData){
+	this.id = id;
+	this.date = Date();
+	this.type = type;
+	this.metaData = metaData;
+}
+
+//Object class PayGrade and Rank
+function PayGradeRank(payGrade, airforceRank, armyRank, NavyRank, MarineRank, CoastGuardRank)
+{
+	this.payGrade = payGrade;
+	this.airforceRank = airforceRank;
+	this.armyRank = armyRank;
+	this.NavyRank = NavyRank;
+	this.MarineRank = MarineRank;
+	this.CoastGuardRank = CoastGuardRank;
+
+}
+
+//Object class personnel
+function Personnel(id, firstName, lastName, branch, payGrade, rank, joinDate)
+{
+	this.id = id;
+	this.firstName = firstName;
+	this.lastName = lastName;
+	this.branch = branch;
+	this.payGrade = payGrade;
+	this.rank = rank;		
+	this.joinDate = joinDate;
+	this.yearsInService = timeInService(this.joinDate);
+	this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+	
+	//Changes attributes depending on rank/pay grade promoted to 
+	//e.g. Salary
+	this.promote = function()
+	{
+			switch(this.rank)
+			{
+				case "AB":					
+					 this.rank = "Amn";
+					 this.payGrade = "E-2"
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "Amn":
+					 this.rank = "A1C";
+					 this.payGrade = "E-3";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "A1C":
+				     this.rank = "SrA";
+					 this.payGrade = "E-4";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "SrA":
+				     this.rank = "SSgt";
+					 this.payGrade = "E-5";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+			    case "SSgt":
+					 this.rank = "TSgt";
+					 this.payGrade = "E-6";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "TSgt":
+					 this.rank = "MSgt";
+					 this.payGrade = "E-7";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "MSgt":
+					 this.rank = "SMSgt";
+					 this.payGrade = "E-8";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "SMSgt":
+				     this.rank = "CMSgt";
+					 this.payGrade = "E-9";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "CMSgt":
+					 document.getElementById("demo1").innerHTML = "Personnel have reached the highest enlisted rank. Next level for promotion will require a commission<br/>" ;
+					 break;	
+				case "2LT":
+					 this.rank = "1LT";
+					 this.payGrade = "O-2";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "1LT":
+					 this.rank = "CPT";
+					 this.payGrade = "O-3";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "CPT":
+				     this.rank = "MAJ";
+					 this.payGrade = "O-4";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "MAJ":
+				     this.rank = "LTCOL";
+					 this.payGrade = "O-5";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+			    case "LTCOL":
+					 this.rank = "COL";
+					 this.payGrade = "O-6";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "COL":
+					 this.rank = "BGEN";
+					 this.payGrade = "O-7";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "BGEN":
+					 this.rank = "LTGEN";
+					 this.payGrade = "O-8";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "LTGEN":
+				     this.rank = "MAJGEN";
+					 this.payGrade = "O-9";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "MAJGEN":
+				     this.rank = "GEN";
+					 this.payGrade = "O-10";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "GEN":
+					 document.getElementById("demo1").innerHTML = "Personnel have reached the highest rank. Retirement is the next option<br/>" ;
+					 break;				
+			}
+			
+			return this.rank;	
+	};	
+}
+
+//Pay object based on years of service 
+function pay(objPayGrade, twoLess, overTwo, overThree, overFour, overSix, overEight, overTen, overTwelve, overFourteen, overSixteen, overEighteen){
+	this.objPayGrade = objPayGrade;
+	this.twoLess = twoLess;
+	this.overTwo = overTwo;
+	this.overThree = overThree;
+	this.overFour = overFour;
+	this.overSix = overSix;
+	this.overEight = overEight;
+	this.overTen = overTen;
+	this.overTwelve = overTwelve;
+	this.overFourteen = overFourteen;
+	this.overSixteen = overSixteen;
+	this.overEighteen = overEighteen;	
+	
+	//TIS = Time is service (years)
+	this.calcBasePay = function(TIS){
+		var sal = 0;
+		if(TIS < 2){
+			sal = this.twoLess;
+		}
+		else if(TIS >= 2 && TIS < 3){
+			sal = this.overTwo;
+		}
+		else if(TIS >= 3 && TIS < 4){
+			sal = this.overThree;
+		}
+		else if(TIS >= 4 && TIS < 6){
+			sal = this.overFour;
+		}
+		else if(TIS >= 6 && TIS < 8){
+			sal = this.overSix;
+		}
+		else if(TIS >= 8 && TIS < 10){
+			sal = this.overEight;
+		}
+		else if(TIS >= 10 && TIS < 12){
+			sal = this.overTen;
+		}
+		else if(TIS >= 12 && TIS < 14){
+			sal = this.overTwelve;
+		}
+		else if(TIS >= 14 && TIS < 16){
+			sal = this.overFourteen;
+		}
+		else if(TIS >= 16 && TIS < 18){
+			sal = this.overSixteen;
+		}
+		else{
+			sal = this.overEighteen;
+		}		
+		return sal;
+	}	
+}
+
+//Array that saves all transaction executed
+var transactionHistory = [];
+
+//Enlisted paygrade objects to determine corresponding rank accross branches
+var EPGone = new PayGradeRank("E-1", "AB", "PVT", "SR|HR|FR|CR|AR", "PVT", "SR");
+var EPGtwo = new PayGradeRank("E-2", "Amn", "PV2", "SA|HA|FA|CA|AA", "PFC", "SA|FA|AA");
+var EPGthree = new PayGradeRank("E-3", "A1C", "PFC", "SN|HN|FN|CN|AN", "LCpl", "SN|FN|AN");
+var EPGfour = new PayGradeRank("E-4", "SrA", "CPL|SPC", "PO3", "Cpl", "PO3");
+var EPGfive = new PayGradeRank("E-5", "SSgt", "SG", "PO2", "Sgt", "PO2");
+var EPGsix = new PayGradeRank("E-6", "TSgt", "SSG", "PO1", "SSgt", "PO1");
+var EPGseven = new PayGradeRank("E-7", "MSgt", "SFC", "CPO", "GySgt", "CPO");
+var EPGeight = new PayGradeRank("E-8", "SMSgt", "MSG|1SG", "SCPO", "MSgt|1stSgt", "SCPO");
+var EPGnine = new PayGradeRank("E-9", "CMSgt", "SGM|CSM|SMA", "MCPO|CMDCM|FLTCM/FORCM|MCPON", "SgtMaj|MGySgt|SgtMajMC", "MCPO|CMC");
+
+//Officer paygrade objects to determine corresponeding rank accross branches
+var OPGone = new PayGradeRank("O-1", "2LT", "2LT", "ENS", "2LT", "ENS");
+var OPGtwo = new PayGradeRank("O-2", "1LT", "1LT", "LTJG", "1LT", "LTJG");
+var OPGthree = new PayGradeRank("O-3", "CPT", "CPT", "LT", "CPT", "LT");
+var OPGfour = new PayGradeRank("O-4", "MAJ", "MAJ", "LCDR", "MAJ", "LCDR");
+var OPGfive = new PayGradeRank("O-5", "LTCOL", "LTCOL", "CDR", "LTCOL", "CDR");
+var OPGsix = new PayGradeRank("O-6", "COL", "COL", "CAPT", "COL", "CAPT");
+var OPGseven = new PayGradeRank("O-7", "BGEN", "BGEN", "RDML(lh)", "BGEN", "RDML(lh)");
+var OPGeight = new PayGradeRank("O-8", "MAJGEN", "MAJGEN", "RDML(uh)", "MAJGEN", "RDML(uh)");
+var OPGnine = new PayGradeRank("O-9", "LTGEN", "LTGEN", "VADM", "LTGEN", "VADM");
+var OPGten = new PayGradeRank("O-10", "GEN", "GEN", "ADM", "GEN", "ADM");
+
+//Warrant officerPayGradeRankArray
+var WOone = new PayGradeRank("WO1", "", "WO1", "WO-1", "WO-1", "WO-1");
+var WOtwo = new PayGradeRank("CW2", "", "WO2", "CWO-2", "BGEN", "CWO-2");
+var WOthree = new PayGradeRank("CW3", "", "WO3", "CWO-3", "CWO-3", "CWO-3");
+var WOfour = new PayGradeRank("CW4", "", "WO4", "CWO-4", "CWO-4", "CWO-4");
+var WOfive = new PayGradeRank("CW5", "", "WO5", "CWO-5", "CWO-5", "CWO-5");
+
+//Officer base pay objects
+var OfficerOne = new pay("O-1", 2972.40, 3093.90, 3740.10, 3740.10, 3740.10, 3740.10, 3740.10, 3740.10, 3740.10, 3740.10, 3740.10);
+var OfficerTwo = new pay("O-2", 3424.50, 3900.30, 4491.90, 4643.70, 4739.40, 4793.40, 4739.40, 4793.40, 4739.40, 4793.40, 4793.40);
+var OfficerThree = new pay("O-3", 3963.60, 4492.80, 4849.20, 5287.20, 5540.70, 5818.80, 5998.20, 6293.70, 6448.20, 6448.20, 6448.20);
+var OfficerFour = new pay("O-4", 4507.80, 5218.20, 5566.50, 5643.90, 5967.00, 6313.80, 6745.80, 7081.50, 7314.90, 7449.30, 7526.70);
+var OfficerFive = new pay("O-5", 5224.50, 5885.70, 6292.80, 6396.60, 6624.00, 6776.70, 7110.30, 7365.00, 7673.10, 8158.50, 8388.90);
+var OfficerSix = new pay("O-6", 6267.00, 6885.30, 7377.10, 7377.10, 7365.00, 7680.90, 7722.30, 7722.30, 8161.20, 8937.00, 9392.70);
+var OfficerSeven = new pay("O-7", 8264.40, 8648.40, 8826.00, 8967.30, 9222.90, 9475.80, 9767.70, 10059.00, 10351.20, 11269.20, 12043.80);
+var OfficerEight = new pay("O-8", 9946.20, 10272.00, 10488.30, 10548.60, 10818.60, 11269.20, 11373.90, 11802.00, 11940.70, 12293.40, 12827.10);
+var OfficerNine = new pay("O-9", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+//Warrant Officer pay objects
+var WarrantOfficerOne = new pay("W-1", 4636.80, 4636.80, 4636.80, 4636.80, 4636.80, 4636.80, 4636.80, 4636.80, 4636.80, 4636.80, 4636.80, 4636.80);
+var WarrantOfficerTwo = new pay("W-2", 4918.80, 5021.40, 5102.70, 5102.70, 5102.70, 5102.70, 5102.70, 5102.70, 5102.70, 5102.70, 5102.70, 5102.70);
+var WarrantOfficerThree = new pay("W-3", 5606.70, 5736.00, 5873.40, 6060.00, 6060.00, 6060.00, 6060.00, 6060.00, 6060.00, 6060.00, 6060.00, 6060.00);
+var WarrantOfficerFour = new pay("W-4", 6104.10, 5396.00, 6635.40, 69090.00, 6909.00, 7047.00, 7047.00, 7047.00, 7047.00, 7047.00, 7047.00, 7047.00);
+var WarrantOfficerFive = new pay("W-5", 6726.60, 7068.00, 7322.10, 7603.50, 7603.50, 7603.50, 7603.50, 7603.50, 7603.50, 7603.50, 7603.50, 7603.50);
+
+//Enlisted base pay objects
+var EnlistedOne = new pay("E-1", 1556.90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+var EnlistedTwo = new pay("E-2", 1756.50, 1756.50, 1756.50, 1756.50, 1756.50, 1756.50, 1756.50, 1756.50, 1756.50, 1756.50, 1756.50);
+var EnlistedThree = new pay("E-3", 1847.10, 1963.20, 2082.00, 2082.00, 2082.00, 2082.00, 2082.00, 2082.00, 2082.00, 2082.00, 2082.00);
+var EnlistedFour = new pay("E-4", 2046.00, 2150.10, 2276.10, 2382.00, 2483.40, 2483.40, 2483.40, 2483.40, 2483.40, 2483.40, 2483.40);
+var EnlistedFive = new pay("E-5", 2231.40, 2381.40, 2496.60, 2614.20, 2797.80, 2989.80, 3147.60, 3166.20, 3166.20, 3166.20, 3166.20);
+var EnlistedSix = new pay("E-6", 2435.70, 2680.20, 2798.40, 2913.60, 3033.60, 3303.30, 3408.60, 3612.0, 3674.40, 3719.70, 3772.50);
+var EnlistedSeven = new pay("E-7", 2816.10, 3073.50, 3191.40, 3468.90, 3678.00, 3765.60, 4004.70, 4078.70, 4178.70, 4297.50, 4423.80);
+var EnlistedEight = new pay("E-8", 0, 0, 0, 0, 0, 4050.90, 4230.00, 4341.00, 4473.90, 4618.20, 4878.00);
+var EnlistedNine = new pay("E-9", 0, 0, 0, 0, 0, 0, 4948.80, 5060.70, 5202.30, 5368.20, 5368.20);
+
+//Officer base pay array
+var OfficerPayArray = [];
+OfficerPayArray.push(OfficerNine);
+OfficerPayArray.push(OfficerEight);
+OfficerPayArray.push(OfficerSeven);
+OfficerPayArray.push(OfficerSix);
+OfficerPayArray.push(OfficerFive);
+OfficerPayArray.push(OfficerFour);
+OfficerPayArray.push(OfficerThree);
+OfficerPayArray.push(OfficerTwo);
+OfficerPayArray.push(OfficerOne);
+
+//warrant officer pay array
+var WarranOfficerPayArray = [];
+WarranOfficerPayArray.push(WarrantOfficerFive);
+WarranOfficerPayArray.push(WarrantOfficerFour);
+WarranOfficerPayArray.push(WarrantOfficerThree);
+WarranOfficerPayArray.push(WarrantOfficerTwo);
+WarranOfficerPayArray.push(WarrantOfficerOne);
+
+//enlisted base pay array
+var EnlistedPayArray = [];
+EnlistedPayArray.push(EnlistedNine);
+EnlistedPayArray.push(EnlistedEight);
+EnlistedPayArray.push(EnlistedSeven);
+EnlistedPayArray.push(EnlistedSix);
+EnlistedPayArray.push(EnlistedFive);
+EnlistedPayArray.push(EnlistedFour);
+EnlistedPayArray.push(EnlistedThree);
+EnlistedPayArray.push(EnlistedTwo);
+EnlistedPayArray.push(EnlistedOne);
+
+//enlisted paygrade and corresponding rank array
+var enlistePayGradeRankArray = [];
+enlistePayGradeRankArray.push(EPGnine);
+enlistePayGradeRankArray.push(EPGeight);
+enlistePayGradeRankArray.push(EPGseven);
+enlistePayGradeRankArray.push(EPGsix);
+enlistePayGradeRankArray.push(EPGfive);
+enlistePayGradeRankArray.push(EPGfour);
+enlistePayGradeRankArray.push(EPGthree);
+enlistePayGradeRankArray.push(EPGtwo);
+enlistePayGradeRankArray.push(EPGone);
+
+//officer paygrade and corresponding rank array
+var officerPayGradeRankArray = [];
+officerPayGradeRankArray.push(OPGone);
+officerPayGradeRankArray.push(OPGtwo);
+officerPayGradeRankArray.push(OPGthree);
+officerPayGradeRankArray.push(OPGfour);
+officerPayGradeRankArray.push(OPGfive);
+officerPayGradeRankArray.push(OPGsix);
+officerPayGradeRankArray.push(OPGseven);
+officerPayGradeRankArray.push(OPGeight);
+officerPayGradeRankArray.push(OPGnine);
+officerPayGradeRankArray.push(OPGten);
+
+//warrant officer paygrade and corresponding rank array
+var WOPayGradeRankArray = [];
+WOPayGradeRankArray.push(WOfive);
+WOPayGradeRankArray.push(WOfour);
+WOPayGradeRankArray.push(WOthree);
+WOPayGradeRankArray.push(WOtwo);
+WOPayGradeRankArray.push(WOone);
+
+//Prints pay chart from array 
+function PrintPayTable(){
+	var testPayGrade = "O-1";
+	var PayTable = document.getElementById("officersPayTable");
+	var EPayTable = document.getElementById("enlistedPayTable");
+	var WPayTable = document.getElementById("warrantOfficerPayTable");
+	var row ="";
+	var cell = "";
+	var Erow= "";
+	var Ecell = "";
+	var Wrow = "";
+	var Wcell = "";
+	
+//insert cells on testTable with attributes of object on each cell index	
+	for(var i = 0; i < OfficerPayArray.length ; i++)
+	{
+		row = PayTable.insertRow(i+5);
+		for(var j = 0; j<12; j++)//<------------------------------------------------(BUG)Need to figure out how to retrieve number of attributes of each objects--------------
+		{
+			cell = row.insertCell(j);
+			if(j == 0){
+				cell.innerHTML = "<b> " + OfficerPayArray[i].objPayGrade + "</b>";	
+			}else if(j==1){
+				if(OfficerPayArray[i].twoLess > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].twoLess.toFixed(2));
+				}else{
+					cell.innerHTML = " ";
+				}
+					
+			}else if(j==2){
+				if(OfficerPayArray[i].overTwo > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overTwo.toFixed(2));	
+				}else{
+					cell.innerHTML = " ";
+				}
+				
+			}else if(j==3){
+				if(OfficerPayArray[i].overThree > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overThree.toFixed(2));
+				}else{
+					cell.innerHTML = " ";
+				}
+								
+			}else if(j==4){
+				if(OfficerPayArray[i].overFour > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overFour.toFixed(2));
+				}else{
+					cell.innerHTML = " ";
+				}
+					
+			}else if(j==5){
+				if(OfficerPayArray[i].overSix > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overSix.toFixed(2));
+				}
+				else{
+					cell.innerHTML = " ";
+				}
+					
+			}else if(j==6){
+				if(OfficerPayArray[i].overEight > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overEight.toFixed(2));
+				}else{
+					cell.innerHTML = " ";
+				}
+					
+			}else if(j==7){
+				if(OfficerPayArray[i].overTen > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overTen.toFixed(2));	
+				}else{
+					cell.innerHTML = " ";
+				}
+				
+			}else if(j==8){
+				if(OfficerPayArray[i].overTwelve > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overTwelve.toFixed(2));	
+				}else{
+					cell.innerHTML = " ";
+				}
+				
+			}else if(j==9){
+				if(OfficerPayArray[i].overFourteen > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overFourteen.toFixed(2));
+				}else{
+					cell.innerHTML = " ";
+				}
+					
+			}else if(j==10){
+				if(OfficerPayArray[i].overSixteen > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overSixteen.toFixed(2));	
+				}else{
+					cell.innerHTML = " ";
+				}
+				
+			}else {
+				if(OfficerPayArray[i].overEighteen > 0){
+					cell.innerHTML = tf.format(OfficerPayArray[i].overEighteen.toFixed(2));
+				}else{
+					cell.innerHTML = " ";
+				}
+					
+			}
+				
+		}
+		
+		
+	}
+//insert cells on enlistedPayTable  with of object attributes from EnlistedPayArray
+	for(var i = 0; i < EnlistedPayArray.length ; i++)
+	{
+		Erow = EPayTable.insertRow(i+5);
+		for(var j = 0; j<12; j++)//<------------------------------------------------(BUG)Need to figure out how to retrieve number of attributes of each objects--------------
+		{
+			Ecell = Erow.insertCell(j);
+			if(j == 0){
+				Ecell.innerHTML = "<b> " + EnlistedPayArray[i].objPayGrade + "</b>";	
+			}else if(j==1){
+				if(EnlistedPayArray[i].twoLess > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].twoLess.toFixed(2));
+				}else{
+					Ecell.innerHTML = " ";
+				}
+					
+			}else if(j==2){
+				if(EnlistedPayArray[i].overTwo > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overTwo.toFixed(2));	
+				}else{
+					Ecell.innerHTML = " ";
+				}
+				
+			}else if(j==3){
+				if(EnlistedPayArray[i].overThree > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overThree.toFixed(2));
+				}else{
+					Ecell.innerHTML = " ";
+				}
+								
+			}else if(j==4){
+				if(EnlistedPayArray[i].overFour > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overFour.toFixed(2));
+				}else{
+					Ecell.innerHTML = " ";
+				}
+					
+			}else if(j==5){
+				if(EnlistedPayArray[i].overSix > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overSix.toFixed(2));
+				}
+				else{
+					Ecell.innerHTML = " ";
+				}
+					
+			}else if(j==6){
+				if(EnlistedPayArray[i].overEight > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overEight.toFixed(2));
+				}else{
+					Ecell.innerHTML = " ";
+				}
+					
+			}else if(j==7){
+				if(EnlistedPayArray[i].overTen > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overTen.toFixed(2));	
+				}else{
+					Ecell.innerHTML = " ";
+				}
+				
+			}else if(j==8){
+				if(EnlistedPayArray[i].overTwelve > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overTwelve.toFixed(2));	
+				}else{
+					Ecell.innerHTML = " ";
+				}
+				
+			}else if(j==9){
+				if(EnlistedPayArray[i].overFourteen > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overFourteen.toFixed(2));
+				}else{
+					Ecell.innerHTML = " ";
+				}
+					
+			}else if(j==10){
+				if(EnlistedPayArray[i].overSixteen > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overSixteen.toFixed(2));	
+				}else{
+					Ecell.innerHTML = " ";
+				}
+				
+			}else {
+				if(EnlistedPayArray[i].overEighteen > 0){
+					Ecell.innerHTML = tf.format(EnlistedPayArray[i].overEighteen.toFixed(2));
+				}else{
+					Ecell.innerHTML = " ";
+				}
+					
+			}
+				
+		}
+		
+		
+	}
+
+	for(var i = 0; i < WarranOfficerPayArray.length ; i++)
+	{
+		Wrow = WPayTable.insertRow(i+5);
+		for(var j = 0; j<12; j++)//<------------------------------------------------(BUG)Need to figure out how to retrieve number of attributes of each objects--------------
+		{
+			Wcell = Wrow.insertCell(j);
+			if(j == 0){
+				Wcell.innerHTML = "<b> " + WarranOfficerPayArray[i].objPayGrade + "</b>";	
+			}else if(j==1){
+				if(WarranOfficerPayArray[i].twoLess > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].twoLess.toFixed(2));
+				}else{
+					Wcell.innerHTML = " ";
+				}
+					
+			}else if(j==2){
+				if(WarranOfficerPayArray[i].overTwo > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overTwo.toFixed(2));	
+				}else{
+					Wcell.innerHTML = " ";
+				}
+				
+			}else if(j==3){
+				if(WarranOfficerPayArray[i].overThree > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overThree.toFixed(2));
+				}else{
+					Wcell.innerHTML = " ";
+				}
+								
+			}else if(j==4){
+				if(WarranOfficerPayArray[i].overFour > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overFour.toFixed(2));
+				}else{
+					Wcell.innerHTML = " ";
+				}
+					
+			}else if(j==5){
+				if(WarranOfficerPayArray[i].overSix > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overSix.toFixed(2));
+				}
+				else{
+					Wcell.innerHTML = " ";
+				}
+					
+			}else if(j==6){
+				if(WarranOfficerPayArray[i].overEight > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overEight.toFixed(2));
+				}else{
+					Wcell.innerHTML = " ";
+				}
+					
+			}else if(j==7){
+				if(WarranOfficerPayArray[i].overTen > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overTen.toFixed(2));	
+				}else{
+					Wcell.innerHTML = " ";
+				}
+				
+			}else if(j==8){
+				if(WarranOfficerPayArray[i].overTwelve > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overTwelve.toFixed(2));	
+				}else{
+					Wcell.innerHTML = " ";
+				}
+				
+			}else if(j==9){
+				if(WarranOfficerPayArray[i].overFourteen > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overFourteen.toFixed(2));
+				}else{
+					Wcell.innerHTML = " ";
+				}
+					
+			}else if(j==10){
+				if(WarranOfficerPayArray[i].overSixteen > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overSixteen.toFixed(2));	
+				}else{
+					Wcell.innerHTML = " ";
+				}
+				
+			}else {
+				if(WarranOfficerPayArray[i].overEighteen > 0){
+					Wcell.innerHTML = tf.format(WarranOfficerPayArray[i].overEighteen.toFixed(2));
+				}else{
+					Wcell.innerHTML = " ";
+				}					
+			}				
+		}				
+	}	
+}
+
+//Format numbers to US dollars with commas every thousand place
+var nf = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+//Format number with comma every thousandth
+var tf = new Intl.NumberFormat('en-US', {
+	minimumFractionDigits: 2,
+	maximumFractionDigits: 2
+
+});
+//testing end***********************************************************************************************************************************
+
+
+//Calculate years in service (promotion to some ranks require certain years in service)
+function timeInService(JoinDate)
+{
+	//month/day/year
+	//var dte = document.getElementById("joinDateInput").value;
+	var entryDate = new Date(JoinDate);  
+	var today = new Date();  
+	var years = today.getFullYear() - entryDate.getFullYear();  
+
+	// Reset entryDate to the current year.  
+	entryDate.setFullYear(today.getFullYear());  
+
+	// If the user's birthday has not occurred yet this year, subtract 1.  
+	if (today < entryDate)  
+	{  
+		years--;  
+	}  
+	
+	return years;
+	//document.getElementById("demo2").innerHTML = "time in service " + years;  
+}
+
+function CalculateSalary(payGrade, timeInService)
+{	
+	var sal = 0;
+
+	if(payGrade[0] == "O"){
+		for(var i = 0; i<OfficerPayArray.length; i++){
+			if(payGrade == OfficerPayArray[i].objPayGrade){
+				sal = OfficerPayArray[i].calcBasePay(timeInService);
+			}
+		}
+		
+	}
+	if(payGrade[0] == "E"){
+		for(var i = 0; i<EnlistedPayArray.length; i++){
+			if(payGrade == EnlistedPayArray[i].objPayGrade){
+				sal = EnlistedPayArray[i].calcBasePay(timeInService);
+			}
+		}
+	
+	}
+	
+	if(payGrade[0] == "W")
+	{
+		for(var i = 0; i<WarranOfficerPayArray.length; i++){
+			if(payGrade == WarranOfficerPayArray[i].objPayGrade){
+				sal = WarranOfficerPayArray[i].calcBasePay(timeInService);
+			}
+		}
+	}
+	
+	return sal;	
+}
+
+//Data for demonstration purposes
+var Ralph = new Personnel('RD2234','Ralph', 'Dboy','Air Force', 'E-4', 'SrA', '6/2/2009');
+var Rez = new Personnel('RD2112','Rez', 'Dboy','Air Force', 'E-4', 'SrA','4/12/2010');
+var James = new Personnel('JB5447','James', 'Bond', 'Air Force', 'O-1', '2LT','10/2/2011');
+var George = new Personnel('GC7865','George', 'Conoley','Air Force', 'O-3', 'CPT', '7/21/2005');
+var RezC = new Personnel('RC1121','Rez', 'Cortex', 'Air Force', 'W-1', 'AB', '12/18/2017');
+var JCooper = new Personnel('JC7894','Jamison','Cooper', 'Air Force', 'O-3','CPT','11/20/2010');
+var JSuarez =  new Personnel('JS2234', 'Juan', 'Suarez', 'Air Force', 'E-2', 'Amn', '6/2/2017');
+
+//Array where all Personnel object are saved
+var objArray = [];
+objArray.push(Ralph);
+objArray.push(Rez);
+objArray.push(James);
+objArray.push(George);
+objArray.push(RezC);
+objArray.push(JCooper);
+objArray.push(JSuarez);
+
+//Print string yr or yrs based on number of years
+function yearWord(years)
+{
+	var word = "";
+	if(years > 1)
+	{
+		word = "yrs";
+	}
+	else{
+		word = "yr";
+	}
+	return word;
+}
+
+//Print all personnel object and its members from objArray
+function printList()
+{	
+	document.getElementById("demo").innerHTML = "";
+	document.getElementById("demo1").innerHTML = "";
+
+	for(var i = 0; i< objArray.length; i++)
+	{
+		document.getElementById("demo1").innerHTML += "Personnel ID: "+objArray[i].id +"<br/>Name: " + objArray[i].firstName + " " + objArray[i].lastName + "<br/>Branch: " + objArray[i].branch + "<br/>Pay Grade: " + objArray[i].payGrade + "<br/>Rank: " + objArray[i].rank + "<br/>Salary: " + nf.format(objArray[i].salary.toFixed(2)) + "<br/>Years in service: " + objArray[i].yearsInService + " " + yearWord(objArray[i].yearsInService) + "<br/><br/>";
+	}	
+}
+
+//Retrieves data of all personnel matching the search field input (No Regex yet)
+function search(type)
+{
+	document.getElementById("demo1").innerHTML = "";//Clears the output display of previous transaction result
+	var searchedKeyCounter = 0;	
+	var searchedKey;
+	if(type == 0)
+	{
+		searchedKey = document.getElementById("search").value;
+	}
+	else if(type == 1){
+		searchedKey = document.getElementById("searchPromDem").value;
+	}
+	else{
+		searchedKey = document.getElementById("searchDelete").value;
+	}
+	
+	if(searchedKey == '')
+	{
+		document.getElementById("demo").innerHTML = "<font color='red'>Error! Please something on the search field</font>";
+	}
+	else
+	{
+		document.getElementById("demo").innerHTML = '';
+		for(var i = 0; i<objArray.length; i++)
+		{
+			if(searchedKey.toLowerCase() == objArray[i].firstName.toLowerCase() || searchedKey.toLowerCase() == objArray[i].lastName.toLowerCase()||searchedKey.toLowerCase() == objArray[i].id.toLowerCase()||searchedKey.toLowerCase() == objArray[i].rank.toLowerCase()||searchedKey.toLowerCase() == objArray[i].payGrade.toLowerCase())
+			{
+				//objArray[i].promote();
+				document.getElementById("demo1").innerHTML += "ID: " + objArray[i].id + "<br/>Name: " + objArray[i].firstName + " " + objArray[i].lastName + "<br/>branch: " + objArray[i].branch + "<br/>Pay Grade: " + objArray[i].payGrade + "<br/>Rank: " + objArray[i].rank + "<br/>Pay Grade: " + objArray[i].payGrade + "<br/>Salary: " + nf.format(objArray[i].salary.toFixed(2)) + "<br/>Years in service: " + objArray[i].yearsInService +  " " + yearWord(objArray[i].yearsInService) + " <br/>";
+				if(type == 0)
+				{
+					document.getElementById("demo1").innerHTML += "<br/>";
+				}
+				else if(type == 1){
+					document.getElementById("demo1").innerHTML += "<button id='" + objArray[i].id + "'onclick='Promote(this.id)'>Promote</button> <button>Demote</button><br/><br/>";
+				}
+				else{//type == 2
+					document.getElementById("demo1").innerHTML += "<button id='" + objArray[i].id + "'onclick='validateDeletePersonnel(this.id)'>Delete Personnel</button> <button>Cancel</button><br/><br/>";
+				}
+				searchedKeyCounter += 1;
+			}			
+		}
+		
+		if(searchedKeyCounter == 0)
+		{
+			document.getElementById("demo1").innerHTML = "<font color='red'>Error! " + searchedKey + " cannot be found in the database</font>";
+		}
+	}
+}
+
+function validateDeletePersonnel(id){
+	for(var i = 0; i<objArray.length; i++){
+		if(id == objArray[i].id){
+			document.getElementById("demo1").innerHTML = "Are you sure you want to <font color='red'> delete </font> the following personnel?<br/>";
+			document.getElementById("demo1").innerHTML += "Perosnnel ID: " + objArray[i].id;
+			document.getElementById("demo1").innerHTML += "<br/>Name: " + objArray[i].firstName + " " + objArray[i].lastName;
+			document.getElementById("demo1").innerHTML += "<br/><button id='" + objArray[i].id + "' onclick='DeletePersonnelData(this.id)'>Confirm Delete</button> <button onclick='cancelButton()'>Cancel</button><br/><br/>";
+		}
+	}
+}
+
+function cancelButton(){
+	document.getElementById("demo1").innerHTML = "";
+	document.getElementById("demo").innerHTML = "";
+	document.getElementById("searchDelete").value = ""
+}
+
+//Promotes personnel one rank up thus changing the pay grade and salary 
+function Promote(clicked_id)
+{
+	document.getElementById("demo1").innerHTML = "";
+	for(var i = 0; i<objArray.length; i++)
+	{
+		if(clicked_id == objArray[i].id)
+		{
+			objArray[i].promote();
+			//objArray[i].updateSalary();
+			document.getElementById("demo").innerHTML = objArray[i].id + ", " + objArray[i].firstName + " " + objArray[i].lastName + " promoted to " + objArray[i].rank;
+			document.getElementById("demo1").innerHTML = "Personnel ID: "+objArray[i].id +"<br/>Name: " + objArray[i].firstName + " " + objArray[i].lastName + "<br/>Rank: " + objArray[i].rank + "<br/>Pay Grade: " + objArray[i].payGrade + "<br/>Salary: " + nf.format(objArray[i].salary.toFixed(2)) + "<br/>Years in service: " + objArray[i].yearsInService + " " + yearWord(objArray[i].yearsInService) + "<br/>";
+		}
+	}
+}
+
+//Changes the content of the main page based on which tab is active
+function openTab(evt, tabName){
+	
+	var i, tabcontent, tablinks, inputs, j;
+	tabcontent = document.getElementsByClassName("tabcontent");
+	
+	//Clear all necessary elements by id name
+	document.getElementById("search").value = "";
+	document.getElementById("searchPromDem").value = "";
+	document.getElementById("demo").innerHTML = "";
+	document.getElementById("demo1").innerHTML = "";
+	
+	//Disable display attributes of divs with tabcontent class
+	for(i=0;i<tabcontent.length;i++){
+		tabcontent[i].style.display = "none";	
+	}
+	
+	tablinks = document.getElementsByClassName("tablinks");
+	for(i = 0; i<tablinks.length; i++){
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
+	}
+	document.getElementById(tabName).style.display = "block";
+	evt.currentTarget.className += " active";
+}
+
+function transactionHistoryTab(evt, tabName){
+	
+	var i, tabcontent, tablinks, inputs, j;
+	tabcontent = document.getElementsByClassName("transactionTab");
+	
+	//Clear all necessary elements by id name
+	
+	//Disable display attributes of divs with tabcontent class
+	for(i=0;i<tabcontent.length;i++){
+		tabcontent[i].style.display = "none";	
+	}
+	
+	//tablinks = document.getElementsByClassName("tablinks");
+	//for(i = 0; i<tablinks.length; i++){
+	//	tablinks[i].className = tablinks[i].className.replace(" active", "");
+	//}
+	document.getElementById(tabName).style.display = "block";
+	//evt.currentTarget.className += " active";
+}
+
+
+//Clear input fields in the add personnel div
+function addPrsnlClear(){
+	document.getElementById("personnelIdInput").value = "";
+	document.getElementById("firstNameInput").value = "";
+	document.getElementById("lastNameInput").value = "";
+	document.getElementById("joinDateInput").value = "";
+	document.getElementById("branchSelect").value = "";
+	document.getElementById("payGradeSelect").options.length = 0;
+	document.getElementById("rankSelect").options.length = 0;
+	document.getElementById("joinDateInput").value = "DD/MM/YYYY";
+	ClearInputFlags();
+}
+
+//Adds a new object of personnel base on user input (no regex yet)
+function addPersonnelFunc(){
+	var newIdFormat = "";
+	var newFnameFormat = "";
+	var newLnameFormat = "";
+	var newPersonnel = "";
+	var personnelId = document.getElementById("personnelIdInput").value;
+	var firstName = document.getElementById("firstNameInput").value;
+	var lastName = document.getElementById("lastNameInput").value;
+	var rank = document.getElementById("rankSelect").value;
+	var payGrade = document.getElementById("payGradeSelect").value;
+	var joinDate = document.getElementById("joinDateInput").value;
+	var serviceBranch = document.getElementById("branchSelect").value;
+	var personnelidArr = [];
+	var personnelIdFormat = /^[A-Za-z]{2}\d{4}$/;
+	var nameFormat = /^[a-zA-Z]+$/;
+	var reqFieldsComplete = true;
+	var dateFormat = /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/;
+	//transaction Meta data variables
+	var transactionId = "AP";
+	var transactionNum = "";
+	var transactionType = "AddPersonnel";
+	var transactionData = "";
+	var curDate = "";
+	
+	//Clear empty flags if there are any from previous attempt
+	ClearInputFlags();
+	document.getElementById("demo").innerHTML = "";
+	
+	//Check if all fields were filled out. If not, display flag next to specified field and error message in general
+	//Any empty field will result in reqFieldsComplete = flase
+	if(personnelId == ""){
+		reqFieldsComplete = false;
+		document.getElementById("personnelIdFlag").innerHTML = "<font color='red'>***</font>";		
+	}
+	if(firstName == ""){
+		reqFieldsComplete = false;
+		document.getElementById("fNameFlag").innerHTML = "<font color='red'>***</font>";
+	}
+	if(lastName == ""){
+		reqFieldsComplete = false;
+		document.getElementById("lNameFlag").innerHTML = "<font color='red'>***</font>";
+	}	
+	if(serviceBranch == ""){
+		reqFieldsComplete = false;
+		document.getElementById("branchFlag").innerHTML = "<font color='red'>***</font>";
+	}	
+	if(rank == ""){
+		reqFieldsComplete = false;
+		document.getElementById("rankFlag").innerHTML = "<font color='red'>***</font>";
+	}
+	if(payGrade == ""){
+		reqFieldsComplete = false;
+		document.getElementById("PayGradeFlag").innerHTML = "<font color='red'>***</font>";
+	}
+	
+	if(joinDate == ""){
+		reqFieldsComplete = false;
+		document.getElementById("JoinDateFlag").innerHTML = "<font color='red'>***</font>";		
+	}
+	
+	//Check if personnel id is correctly formatted
+	if(personnelIdFormat.test(personnelId) == false){
+		reqFieldsComplete = false;
+		document.getElementById("personnelIdFlag").innerHTML = "<font color='red'>***</font>";
+		document.getElementById("demo").innerHTML = "Error: Personnel ID field is empty or not in valid format<br/>"
+	}
+	
+	//Check if first name is all alphabet
+	if(nameFormat.test(firstName) == false){
+		reqFieldsComplete = false;
+		document.getElementById("fNameFlag").innerHTML = "<font color='red'>***</font>";
+		document.getElementById("demo").innerHTML += "Error: First name field empty or not in valid format<br/>"
+	}
+	
+	//Check if last name is all alphabet
+	if(nameFormat.test(lastName) == false){
+		reqFieldsComplete = false;
+		document.getElementById("lNameFlag").innerHTML = "<font color='red'>***</font>";
+		document.getElementById("demo").innerHTML += "Error: Last name field empty or not in valid format<br/>"
+	}
+	
+	//Check if date is in the correct format
+	if(dateFormat.test(joinDate) == false){
+		reqFieldsComplete = false;
+		document.getElementById("JoinDateFlag").innerHTML = "<font color='red'>***</font>";
+		document.getElementById("demo").innerHTML += "Error: Join date empty or not in dd/mm/yyyy format<br/>"
+	}
+	
+	//check if first two characters of id corresponds to first letter of first name and first letter of last name respectively
+	if(personnelId[0].toUpperCase()!= firstName[0].toUpperCase() || personnelId[1].toUpperCase() != lastName[0].toUpperCase()){
+		reqFieldsComplete = false;
+		document.getElementById("personnelIdFlag").innerHTML = "<font color='red'>***</font>";
+		document.getElementById("demo").innerHTML += "Error: First two digits of id must correspond to first letter of <font color='red'>first name</font> and first letter of <font color='red'>last name</font> respectively, and last four must be digits 0-9.<br/>";
+	}
+	
+	//Check if the id is already in use or not
+	for(var i = 0; i<objArray.length; i++){
+		if(personnelId.toUpperCase() == objArray[i].id.toUpperCase()){
+			reqFieldsComplete = false;
+			document.getElementById("personnelIdFlag").innerHTML = "<font color='red'>***</font>";
+			document.getElementById("demo").innerHTML += "Error: The chosen id is already in use. Please choose a different four digit unique number.<br/>";
+		}
+	}
+		
+	//Check if all fields were filled out by checking reqFieldsComplete as true being completely filled out
+	if(reqFieldsComplete == true){		
+		//Format first two digit of id to uppercase
+		curDate = new Date();
+		newIdFormat = IdFormat(personnelId);
+		newFnameFormat = nameFormater(firstName);
+		newLnameFormat = nameFormater(lastName);
+		objArray.push(new Personnel(newIdFormat, newFnameFormat, newLnameFormat, serviceBranch, payGrade, rank, joinDate));
+		document.getElementById("demo").innerHTML = "<font color='green'>Personnel Added</font><br/>";
+		document.getElementById("demo").innerHTML += "ID: " + newIdFormat + "<br/>Name: " + newFnameFormat + " " + newLnameFormat + "<br/>Rank: " + rank; 
+		document.getElementById("demo").innerHTML += "<br/> Pay Grade: " + payGrade + "<br/>Join Date: " + joinDate + "<br/><br/>";
+		//document.getElementById("demo").innerHTML += "<br/>newIdFormat: " + newIdFormat + "<br/>newFnameFormat: " + newFnameFormat + "<br/>newLnameFormat: " + newLnameFormat;
+		transactionData = "ID:" + newIdFormat +"|"+"Name:"+newFnameFormat+"-"+newLnameFormat+"|Branch:"+serviceBranch+"|Rank:"+rank;
+		transactionNum = transactionIdGenerator(transactionId);
+		transactionHistory.push(new transaction(transactionNum, transactionType, transactionData));
+		
+		document.getElementById("demo").innerHTML += "Transaction information:<br/>";
+		document.getElementById("demo").innerHTML +=  transactionNum + " --- " + transactionType + " --- " + curDate + " --- " + transactionData;
+		
+		addPrsnlClear();
+		
+	}
+	//flase meaning some fields are empty thus displyaning an error message
+	else{
+		document.getElementById("demo").innerHTML += "Error: Please fill-out propperly all required fields <font color='red'>***</font>";
+	}	
+	
+}
+
+//Format first two digit of id to uppercase
+function IdFormat(id){
+	var idChar = [];
+	var newId = "";
+	for(var i = 0; i<id.length; i++){
+		if(i == 0 || i == 1){
+			idChar.push(id[i].toUpperCase());
+		}
+		else{
+			idChar.push(id[i]);
+		}
+	}
+	newId = idChar.join("");
+	return newId;
+}
+
+//Format first character of name to uppercase
+function nameFormater(name){
+	var nameChar = [];
+	var newName = "";
+	for(var i = 0; i<name.length; i++){
+		if(i == 0){
+			nameChar.push(name[i].toUpperCase());
+		}
+		else{
+			nameChar.push(name[i]);
+		}
+	}
+	newName = nameChar.join("");
+	return newName;
+}
+
+//Clears the three red asterisks nexts to empty input field
+function ClearInputFlags(){
+	document.getElementById("personnelIdFlag").innerHTML = "";
+	document.getElementById("fNameFlag").innerHTML = "";
+	document.getElementById("lNameFlag").innerHTML = "";
+	document.getElementById("branchFlag").innerHTML = "";
+	document.getElementById("rankFlag").innerHTML = "";
+	document.getElementById("PayGradeFlag").innerHTML = "";
+	document.getElementById("JoinDateFlag").innerHTML = "";	
+}
+
+var EnlistedPayGradeArray = [];
+EnlistedPayGradeArray.push("E-9");
+EnlistedPayGradeArray.push("E-8");
+EnlistedPayGradeArray.push("E-7");
+EnlistedPayGradeArray.push("E-6");
+EnlistedPayGradeArray.push("E-5");
+EnlistedPayGradeArray.push("E-4");
+EnlistedPayGradeArray.push("E-3");
+EnlistedPayGradeArray.push("E-2");
+EnlistedPayGradeArray.push("E-1");
+
+var WOPayGradeArray = [];
+WOPayGradeArray.push("CW5");
+WOPayGradeArray.push("CW4");
+WOPayGradeArray.push("CW3");
+WOPayGradeArray.push("CW2");
+WOPayGradeArray.push("WO1");
+
+var OfficerPayGradeArray = [];
+OfficerPayGradeArray.push("O-10");
+OfficerPayGradeArray.push("O-9");
+OfficerPayGradeArray.push("O-8");
+OfficerPayGradeArray.push("O-7");
+OfficerPayGradeArray.push("O-6");
+OfficerPayGradeArray.push("O-5");
+OfficerPayGradeArray.push("O-4");
+OfficerPayGradeArray.push("O-3");
+OfficerPayGradeArray.push("O-2");
+OfficerPayGradeArray.push("O-1");
+
+var PayGradeRankArray = [];
+
+//Clear rank option 
+function clearRankSelectOptions(){
+	document.getElementById("payGradeSelect").options.length = 0;
+	document.getElementById("rankSelect").options.length = 0;
+
+}
+
+//Adds/changes options to army ranks
+function armyRankOptions(){
+	var select = document.getElementById("payGradeSelect");
+	var length = select.options.length;
+	clearRankSelectOptions();
+}
+
+//Adds/Changes options to air force ranks 
+function afRankOptions(){
+	var selectList = document.getElementById("payGradeSelect");	
+	clearRankSelectOptions();//clear rank options to avoid multiplying for every onclick
+
+	for(var i = 0; i<OfficerPayGradeArray.length + 1; i++){
+		var option = document.createElement("option")
+		if(i == 0){
+			option.value = "";
+			option.innerHTML = "Select Pay Grade/Rank";
+		}
+		else{
+			option.value = OfficerPayGradeArray[i-1];
+			option.innerHTML = OfficerPayGradeArray[i-1];
+			option.setAttribute("onclick","getRank()");
+		}
+		selectList.appendChild(option);	
+	
+	}
+	for(var i = 0; i<EnlistedPayGradeArray.length ; i++){
+		var option = document.createElement("option")		
+		option.value = EnlistedPayGradeArray[i];
+		option.innerHTML = EnlistedPayGradeArray[i];
+		option.setAttribute("onclick","getRank()");
+		selectList.appendChild(option);		
+	}	
+}
+
+//Generate numeric part of transaction ID which combine date and four digit unique identifier
+function transactionIdGenerator(transType){	
+	var digits = 4;
+	var monthDigits = 2;
+	var transID = "";
+	var transLast4 = "";
+	var twoDigitMonth = "";
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
+	if(transNum == 9999){
+		transNum = 1;
+	}
+	else{
+		transNum = transNum + 1;
+	}
+	twoDigitMonth = Array(Math.max(monthDigits - String(month).length + 1, 0)).join(0) + month;
+	transLast4 = Array(Math.max(digits - String(transNum).length + 1, 0)).join(0) + transNum;
+	transID = transType + day + twoDigitMonth + year + transLast4;
+	return transID;
+	//document.getElementById("demo").innerHTML += "Transaction Number: " + transID;
+}
+
+//Sets the value of Rank based on payGrade or display options of rank to be selected
+function getRank(){
+	var PG = document.getElementById("payGradeSelect").value;
+	var branch = document.getElementById("branchSelect").value;
+	var selectRankList = document.getElementById("rankSelect");	
+	var option = "";
+	document.getElementById("rankSelect").options.length = 0;
+	
+	//determin if index 0 of PayGrade is E, O, or W
+	//If E, iterate through the enlistePayGradeRankArray and match paygrade then retrieve corresponding rank
+	if(PG[0] == "E"){
+		for(var i = 0; i<enlistePayGradeRankArray.length; i++)
+		{
+			if(PG == enlistePayGradeRankArray[i].payGrade)
+			{
+				option = document.createElement("option");
+				//Retrive corresponding rank for air force
+				if(branch == "Air Force")
+				{					
+					option.value = enlistePayGradeRankArray[i].airforceRank;
+					option.innerHTML = enlistePayGradeRankArray[i].airforceRank;
+					selectRankList.appendChild(option);
+				}
+				//if(branch == "army"){}	
+				//if(branch == "navy"){}
+				//if(branch == "marines"){}
+				//if(branch == "coastGuard"){}
+			}						
+		}
+	}
+	
+	//If W, iterate through the WOPayGradeRankArray and match paygrade then retrieve corresponding rank
+	if(PG[0] == "W"){
+		for(var i = 0; i<WOPayGradeRankArray.length; i++)
+		{
+			if(PG == WOPayGradeRankArray[i].payGrade)
+			{
+				//if(branch == "army"){}	
+				//if(branch == "navy"){}
+				//if(branch == "marines"){}
+				//if(branch == "coastGuard"){}
+			}						
+		}		
+	}
+	
+	//If 0, iterate through the officerPayGradeRankArray and match paygrade then retrieve corresponding rank
+	if(PG[0] == "O"){
+		for(var i = 0; i<officerPayGradeRankArray.length; i++)
+		{
+			if(PG == officerPayGradeRankArray[i].payGrade)
+			{
+				option = document.createElement("option");				
+				if(branch == "Air Force")
+				{					
+					option.value = officerPayGradeRankArray[i].airforceRank;
+					option.innerHTML = officerPayGradeRankArray[i].airforceRank;
+					selectRankList.appendChild(option);
+				}
+				//if(branch == "army"){}	
+				//if(branch == "navy"){}
+				//if(branch == "marines"){}
+				//if(branch == "coastGuard"){}
+			}						
+		}		
+	}
+}
+
+//This function iterates through the objArray looking for the supplied personnel ID and Deletes it.
+function DeletePersonnelData(personnelID){
+	var transactionId = "DP";
+	var transactionNum = "";
+	var transactionType = "DeletePersonnel";
+	var transactionData = "";
+	var curDate = "";
+	
+	for(var i = 0; i<objArray.length; i++){
+		if(personnelID == objArray[i].id){
+			document.getElementById("demo").innerHTML = "Personnel with ID: " + objArray[i].id + " Name: " + objArray[i].firstName + " " + objArray[i].lastName + " has been deleted...<br/><br/>";
+			transactionNum = transactionIdGenerator(transactionId);
+			curDate = new Date();
+			transactionData = "id:" + objArray[i].id + "|name:" + objArray[i].firstName + "-" + objArray[i].lastName + "|branch:" + objArray[i].branch + "|rank:" + objArray[i].rank;
+			transactionHistory.push(new transaction(transactionNum, transactionType, transactionData));
+			
+			document.getElementById("demo").innerHTML += "Transaction information:<br/>";
+			document.getElementById("demo").innerHTML +=  transactionNum + " --- " + transactionType + " --- " + curDate + " --- " + transactionData;
+			objArray.splice(i, 1);
+		}
+	}
+	document.getElementById("demo1").innerHTML = "";
+	document.getElementById("searchDelete").value = "";
+}
+
+//Return a list of all transactions saved in the transactionHistory
+function ViewAllTransactions(){
+	document.getElementById("demo").innerHTML = "TRANSACTION HISTORY<br/>";
+	document.getElementById("demo").innerHTML += "id --- type --- date --- transactio data<br/><br/>";
+	for(var i =0; i<transactionHistory.length; i++){
+		document.getElementById("demo").innerHTML += transactionHistory[i].id + " --- " + transactionHistory[i].type + " --- " + transactionHistory[i].date + "---" + transactionHistory[i].metaData + "<br/><br/>";
+	}
+}
+
+window.onload = function(){
+	PrintPayTable();
+}
+
+</script>
+<style>
+	header{
+		text-align: center;
+		vertical-align: middle;
+		padding-bottom: 1px;
+		margin-top:0px;
+		margin-bottom: 0;
+		overflow: auto;
+		background-color: gray;
+		background-image: url("grey.png");
+		color: white;
+		width:100%;
+	}
+	
+	body{
+		font-family: Arial;
+		margin: 0px;
+		height: 80%;
+	}
+	
+	footer{
+		background-image: url("grey.png");
+		height: 150px;
+		width: 100%;
+		position: relative;
+		
+	}
+	.mainDiv{
+		text-align: center;
+		margin: 0 auto;
+		font: Sans-serif;
+		width: 70%;
+		padding-top: 0px;
+		background: gray;
+
+	}
+	.displayDiv{
+		text-align: left;
+		margin: 0 auto;
+		font: Sans-serif;
+		width: 70%;
+		padding-top: -10px;
+		background: white;
+		min-height: 421px;
+	}
+	
+	/*style for the tab*/
+	.tab {
+		overflow: hidden;
+		border: 1px solid #ccc;
+		border-bottom: 0px;
+		background-color: #f1f1f1;
+		margin-top: 1px;
+		margin-bottom: 10px;
+		
+	}
+	
+	/*style for button inside tab*/
+	.tab button{
+		background-color: inherit;
+		float: left;
+		border: none;
+		outline: none;
+		cursor: pointer;
+		padding: 14px 16px;
+		transition: 0.3s;
+		font-size: 17px;
+		margin-bottom: 0px;
+	}
+	
+	/*style for hovered tab link*/
+	.tab button:hover {
+		background-color: #ddd;
+	}
+	
+	/*Style for active/current tab*/
+	.tab button.active {
+		background-color: #D3D3D3;
+	}
+	
+	/*Style the tab Content*/
+	.tabcontent{
+		display: none;
+		padding-top: 20px;
+		border-top: none;
+		background-color: #D3D3D3;
+		margin-top: -10px;
+		overflow: auto;
+
+	}
+	
+	.transactionTab{
+		display: none;
+		padding-top: 20px;
+		border-top: none;
+		background-color: #D3D3D3;
+		margin-top: -10px;
+
+	}
+	
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 100%;
+	}
+
+	td, th {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 4px;
+	}
+	.td, .th {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 4px;
+	}
+	.data{
+		font-size: small;
+	}
+	.t_head{
+		background-color: #F5F5F5;
+		text-align: center;
+	}
+	
+	.payGrade{
+		font-weight: bold;
+		padding-left: 10px;
+	}
+	
+	.enlistedType{
+		background-color: #DCDCDC;
+		text-align: center;
+	}
+	.tableFooter{
+		border: 0px;
+		color: white;
+		padding: 1px;
+		padding-top: 1px;
+	}
+	.addPersonnelLablel{
+		float: left;
+		clear: left;
+		width: 100px;
+		text-align: left;	
+		padding-bottom: 3px;
+		content-align: right;
+	}
+	.addPersonnelLablel.button{
+		display: inline-block;
+		clear: left;
+		width: 300px;
+		padding-left: 3px;
+		text-align: right;	
+		padding-bottom: 3px;
+	}
+	.addPersonnelInput{
+			width: 200px;			
+			display: inline-block;
+			float: left;
+			margin-bottom: 5px;
+			margin-right: 3px;
+	}
+	.labelFlag{
+		width: 20px;
+		dispaly: inline-block;
+		clear: right;
+		float: left;
+		text-align: left;
+	}
+		
+</style>
+</head>
+<header>
+<h1 id="PMSheader">Personnel Management System</h1>
+</header>
+	
+<body style="align:center;">
+
+<!--Navigation tab-->
+<div class="mainDiv">
+	<div class="tab">
+		<button class="tablinks active" onclick="openTab(event, 'home')">Home</button>
+		<button class="tablinks" onclick="openTab(event, 'searchPersonnel')">Search </button>
+		<button class="tablinks" onclick="openTab(event, 'promoteDemote')">Promote/Demote </button>
+		<button class="tablinks" onclick="openTab(event, 'addPersonnel')">Add Personnel </button>
+		<button class="tablinks" onclick="openTab(event, 'deletePersonnel')">Remove Personnel </button>
+		<button class="tablinks" onclick="openTab(event, 'displayAll')">All Data</button>
+		<button class="tablinks" onclick="openTab(event, 'TransactionHistory')">Transaction History</button>
+		
+	</div>
+	
+	
+	<!--div where active are visible and the rest hidden by enabling and disabling style-->
+	
+	<!--Home div that displays information about rank structure and pay chart-->
+	<div id="home" class="tabcontent" style="padding-left: 0px; background-color: white;margin-top: -10px; padding-right: 0px; padding-top: 0px;display:block;">
+		
+		<!--Rank structure div-->
+		<div id="rankImage" style="margin: 0px; background-color: #D3D3D3; padding-top: 20px;padding-bottom: 15px;margin-bottom: 20px;">
+			<img src="Rank-Chart.png" alt="USAF Ranks" height="inherit" width="850px"><br/><br/>
+		</div>
+		
+		<!--Pay Chart div-->
+		<div id="payChart" style="margin: 0px; background-color: #D3D3D3; padding-top: 5px;padding-bottom: 15px;margin-bottom: 20px;">
+			
+			<h3 style="color: black;margin-bottom: 15px; margin-top: 5px; font-weight: 10;">MONTHLY BASE PAY CHART</h3>
+						
+			<!-- Enlisted pay chart table-->			
+		<table id="officersPayTable"  class="td" style="width:100%; background-color:white; border: 1px;border-color: black; width: 850px; margin: 0 auto;margin-bottom: 20px; font-size: small;">
+			<tr class="t_head">
+				<th colspan="12" class="enlistedType">Officers</th>
+			<tr/>
+			<tr class="t_head">
+				<th border="0">Pay Grade</th>
+				<th colspan="11" >Years in service</th>
+			<tr/>		
+			<tr class="t_head">
+				<th></th>
+				<th>2 or less</th> 
+				<th>over 2</th>
+				<th>over 3</th>
+				<th>over 4</th> 
+				<th>over 6</th>
+				<th>over 8</th>
+				<th>over 10</th>
+				<th>over 12</th> 
+				<th>over 14</th>
+				<th>over 16</th> 
+				<th>over 18</th>
+			  </tr>
+		</table><br/>
+		<table id="warrantOfficerPayTable" class="td" style="width:100%; background-color:white; border: 1px;border-color: black; width: 850px; margin: 0 auto;margin-bottom: 20px; font-size: small;">
+				  <tr class="t_head">
+					<th colspan="12" class="enlistedType">Warrant Officers</th>
+				  <tr/>
+				  <tr class="t_head">
+					<th rowspan="2" border="0">Pay Grade</th>
+					<th colspan="11" >Years in service</th>
+				  <tr/>
+				  <tr class="t_head">
+					<th></th>
+					<th>2 or less</th> 
+					<th>over 2</th>
+					<th>over 3</th>
+					<th>over 4</th> 
+					<th>over 6</th>
+					<th>over 8</th>
+					<th>over 10</th>
+					<th>over 12</th> 
+					<th>over 14</th>
+					<th>over 16</th> 
+					<th>over 18</th>
+				  </tr>			  
+		</table><br/>		
+		<table id="enlistedPayTable" class="td" style="width:100%; background-color:white; border: 1px;border-color: black; width: 850px; margin: 0 auto;margin-bottom: 20px; font-size: small;">
+				  <tr class="t_head">
+					<th colspan="12" class="enlistedType">Enlisted</th>
+				  <tr/>
+				  <tr class="t_head">
+					<th rowspan="2" border="0">Pay Grade</th>
+					<th colspan="11" >Years in service</th>
+				  <tr/>
+				  <tr class="t_head">
+					<th></th>
+					<th>2 or less</th> 
+					<th>over 2</th>
+					<th>over 3</th>
+					<th>over 4</th> 
+					<th>over 6</th>
+					<th>over 8</th>
+					<th>over 10</th>
+					<th>over 12</th> 
+					<th>over 14</th>
+					<th>over 16</th> 
+					<th>over 18</th>
+				  </tr>			  
+		</table>
+		</div>
+		<div style="background-color: #D3D3D3; padding-top: 5px;padding-bottom: 5px;margin-bottom: 5px;">
+			<h3 style="color: black;margin-bottom: -15px; margin-top: 5px; font-weight: 10;">PROMOTION STRUCTURE</h3><br/><br/>
+			<div style="background-color: #DCDCDC; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: 0px;">
+				<b>U.S. Air Force Promotion</b>
+			</div>
+			<div style="background-color: white; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: -10px;">
+				<p>Enlisted Group: Under Construction<br/>
+				
+				</p>
+			</div>
+			<div style="background-color: #DCDCDC; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: 0px;">
+				<b>U.S. Army Promotion</b>
+			</div>
+			<div style="background-color: white; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: -10px;">
+				<p>Enlisted Group: Under Construction<br/>
+				
+				</p>
+			</div>
+			<div style="background-color: #DCDCDC; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: 0px;">
+				<b>U.S. Navy Promotion</b>
+			</div>
+			<div style="background-color: white; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: -10px;">
+				<p>Enlisted Group: Under Construction<br/>
+				
+				</p>
+			</div>
+			<div style="background-color: #DCDCDC; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: 0px;">
+				<b>U.S. Marine Corps Promotion</b>
+			</div>
+			<div style="background-color: white; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: -10px;">
+				<p>Enlisted Group: Under Construction<br/>
+				
+				</p>
+			</div>
+			<div style="background-color: #DCDCDC; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: 0px;">
+				<b>U.S. Coast Guard Promotion</b>
+			</div>
+			<div style="background-color: white; padding-top: 5px;padding-bottom: 5px;margin: 10px;margin-top: -10px;">
+				<p>Enlisted Group: Under Construction<br/>
+				
+				</p>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!--Search Personnel div-->
+	<div id="searchPersonnel" class="tabcontent">
+		<input id="search">
+		<button id="searchButton" onclick="search(0)">Search</button><br/><br/>
+	</div>
+	
+	<!--Promote/Demote Personnel div-->
+	<div id="promoteDemote" class="tabcontent">
+		<input id="searchPromDem">
+		<button id="searchButton" onclick="search(1)">Search promote/demote</button><br/><br/>
+	</div>
+	
+	<!--AddPersonnel div-->
+	<div id="addPersonnel" class="tabcontent" style="height: 250px; padding-left: 350px;">	
+			<label class="addPersonnelLablel">Personnel ID</label><input id="personnelIdInput" class="addPersonnelInput"><label id="personnelIdFlag" class="labelFlag"></label><br/>	
+			<label class="addPersonnelLablel" >First Name</label><input id="firstNameInput" class="addPersonnelInput"><label id="fNameFlag" class="labelFlag"></label><br/>
+			<label class="addPersonnelLablel">Last Name</label><input id="lastNameInput" class="addPersonnelInput"><label id="lNameFlag" class="labelFlag"></label><br/>
+			<label class="addPersonnelLablel">Branch</label>
+				<select id="branchSelect" select="" class="addPersonnelInput">
+					<option value="" >Select Branch of Service</option>
+					<option value="Air Force" onclick="afRankOptions()">Air Force</option>
+				</select><label id="branchFlag" class="labelFlag"></label><br/>
+			<label class="addPersonnelLablel">Pay Grade</label>
+				<select id="payGradeSelect" class="addPersonnelInput">							
+				</select>
+			<label id="rankFlag" class="labelFlag"></label><br/>	
+			<label class="addPersonnelLablel">Rank</label>
+				<select id="rankSelect" class="addPersonnelInput">				
+				</select>
+			<label id="PayGradeFlag" class="labelFlag"></label><br/>
+			<label class="addPersonnelLablel">Join Date</label><input id="joinDateInput" value="DD/MM/YYYY" class="addPersonnelInput"><label id="JoinDateFlag" class="labelFlag"></label><br/><br/>
+		<div class="addPersonnelLablel button" >
+			<button id="addPersonnelButton" style="width: 120px;" onclick="addPersonnelFunc()">Add Perosnnel</button>
+			<button id="clearButton" style="width: 80px;" onclick="addPrsnlClear()">Clear</button><br/>
+		</div>
+	</div>
+	
+	<!--DeletePersonnel div-->
+	<div id="deletePersonnel" class="tabcontent">
+		<input id="searchDelete">
+		<button id="deletePersonnelButton" onclick="search(2)">Search Personnel to Delete</button><br/><br/>
+	</div>
+	
+	<!--Display all personnel data div-->
+	<div id="displayAll" class="tabcontent">
+		<button onclick="printList()">Display Personnel Data</button>
+		<br/><br/>
+	</div>
+	
+	<div id="TransactionHistory" class="tabcontent" style="height: 200px;">
+		<button onclick="ViewAllTransactions()">View All Transactions</button>
+		<button onclick="transactionHistoryTab(evt, 'transSearchTab')" >Search Transaction</button>
+		<button onclick="transactionHistoryTab(evt, 'transDateSearchTab')" >View by Date</button>
+		<div id="transSearchTab" class="transactionTab">
+			<p>Search</P>
+		</div>
+		<div id="transDateSearchTab" class="transactionTab">
+			<p>Date</P>
+		</div>
+		<br/><br/>
+	</div>
+	
+</div>
+<!--Output display div-->
+<div class="displayDiv">
+	
+	<p id="demo"></p>
+	<p id="demo1"></p>
+	<p id="demo2"></p>	
+
+	<!--input id="joinDateInput"-->
+	<!--button onclick="timeInService()">Calculate years in service</button-->
+</div>
+
+<footer>
+<div style="padding: 10px; padding-top: 15px; padding-left: 100px; float: left;">
+	<img src="US_air_Force_logo.png" alt="USAF Ranks" width="100px" height="100px" style="margin: 5px;">
+	<img src="US_army.png" alt="USAF Ranks" width="100px" height="100px" style="margin: 5px;">
+	<img src="US_navy.png" alt="USAF Ranks" width="100px" height="100px" style="margin: 5px;">
+	<img src="usmc_logo.png" alt="USAF Ranks" width="100px" height="100px" style="margin: 5px;">
+	<img src="uscg.png" alt="USAF Ranks" width="100px" height="100px" style="margin: 5px;">
+</div>
+<div style="padding-top: 1px; padding-left: 500px;">
+	<ul style="list-style-type:none; color: white; float: left; margin-left: 200px;">
+	  <li style="padding-bottom: 3px;"><ins>Page Map</ins></li>
+	  <li><a href="#PMSheader" style="color: white; text-decoration: none;">Home</a></li>
+	  <li><a href="#rankImage" style="color: white; text-decoration: none;">Ranks</a></li>
+	  <li><a href="#payChart" style="color: white; text-decoration: none;">Pay Chart</a></li>
+	  <li>Promotion </li>
+	  <li>Organizations</li>
+	</ul>  
+	<ul style="list-style-type:none; color: white; margin-left: 650px;">
+	  <li style="padding-bottom: 3px;" ><ins>Recruiting</ins></li>
+	  <li><a href="#" onClick="window.open('https://www.airforce.com/', '_blank')" style="color: white; text-decoration: none;">Air Force</a></li>
+	  <li><a href="#" onClick="window.open('https://www.army.mil/', '_blank')" style="color: white; text-decoration: none;">Army</a></li>
+	  <li><a href="#" onClick="window.open('http://www.navy.mil/', '_blank')" style="color: white; text-decoration: none;">Navy</a></li>
+	  <li><a href="#" onClick="window.open('http://www.marines.mil/', '_blank')" style="color: white; text-decoration: none;">Marine Corps</a></li>
+	  <li><a href="#" onClick="window.open('https://www.uscg.mil/', '_blank')" style="color: white; text-decoration: none;">Coast Guard</a></li>
+	</ul>  
+ 
+</div>
+</footer>
+</body>
+</html>
