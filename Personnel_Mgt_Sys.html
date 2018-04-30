@@ -853,12 +853,12 @@ function transactionHistoryTab(evt, tabName){
 		tabcontent[i].style.display = "none";	
 	}
 	
-	//tablinks = document.getElementsByClassName("tablinks");
-	//for(i = 0; i<tablinks.length; i++){
-	//	tablinks[i].className = tablinks[i].className.replace(" active", "");
-	//}
+	tablinks = document.getElementsByClassName("TransTablinks");
+	for(i = 0; i<tablinks.length; i++){
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
+	}
 	document.getElementById(tabName).style.display = "block";
-	//evt.currentTarget.className += " active";
+	evt.currentTarget.className += " active";
 }
 
 
@@ -1313,6 +1313,10 @@ window.onload = function(){
 		
 	}
 	
+	.TransTab {
+		overflow: hidden;
+		border-bottom: 0px;
+	}
 	/*style for button inside tab*/
 	.tab button{
 		background-color: inherit;
@@ -1326,13 +1330,22 @@ window.onload = function(){
 		margin-bottom: 0px;
 	}
 	
+	
 	/*style for hovered tab link*/
 	.tab button:hover {
 		background-color: #ddd;
 	}
 	
+	.TransTab button:hover{
+		background-color: #ddd;
+	}
+	
 	/*Style for active/current tab*/
 	.tab button.active {
+		background-color: #D3D3D3;
+	}
+	
+	.TransTab button:active{
 		background-color: #D3D3D3;
 	}
 	
@@ -1577,7 +1590,7 @@ window.onload = function(){
 				
 				</p>
 			</div>
-		</div> -->
+		</div>-->
 	</div>
 	
 	
@@ -1630,11 +1643,10 @@ window.onload = function(){
 		<br/><br/>
 	</div>
 	
-	<div id="TransactionHistory" class="tabcontent" style="height: 100px;">
+	<div id="TransactionHistory" class="tabcontent" style="height: 50px;">
+	
+		<button class="tablinks active" onclick="ViewAllTransactions()">View All Transactions</button>
 		
-		<button onclick="ViewAllTransactions()">View All Transactions</button>
-		
-		<br/><br/>
 	</div>
 	
 </div>
