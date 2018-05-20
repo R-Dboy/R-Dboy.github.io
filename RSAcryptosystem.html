@@ -290,7 +290,18 @@ function EncipherPlainText()
 		{
 			CT.push(RSAencrypt(cipheredPTarr[j]));
 		}
-		document.getElementById("demo4").innerHTML += "<br/><b>ENCRYPTED MESSAGE NUMBERS: " + encryptedCT + "</b>";
+		document.getElementById("demo4").innerHTML += "<br/><b>ENCRYPTED MESSAGE NUMBERS: " + "</b><br/>";
+		for(var i = 0; i<encryptedCT.length; i++)
+		{
+			if(i == 0)
+			{
+				document.getElementById("demo4").innerHTML += encryptedCT[i];
+			} else
+			{
+				document.getElementById("demo4").innerHTML += ", " + encryptedCT[i];
+			}
+			
+		}
 	}	
 }
 
