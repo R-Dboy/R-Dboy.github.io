@@ -279,12 +279,13 @@ function EncipherPlainText()
 			}
 			if(i == 0)
 			{
-				document.getElementById("PTencryptWarn").innerHTML += plainText[i].toUpperCase() +" = " + cipheredPTarr[i];
+				document.getElementById("PTencryptWarn").innerHTML += "<b>" + plainText[i].toUpperCase() +"</b> = " + cipheredPTarr[i];
 			}
 			else{
-				document.getElementById("PTencryptWarn").innerHTML += ", " + plainText[i].toUpperCase() +" = " + cipheredPTarr[i];
+				document.getElementById("PTencryptWarn").innerHTML += ", <b>" + plainText[i].toUpperCase() +"</b> = " + cipheredPTarr[i];
 			}			
 		}
+		document.getElementById("PTencryptWarn").innerHTML += "<br/>";
 		for(var j = 0; j<cipheredPTarr.length; j++)
 		{
 			CT.push(RSAencrypt(cipheredPTarr[j]));
