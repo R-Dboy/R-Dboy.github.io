@@ -680,7 +680,7 @@ function decryptCipherText(){
 	else{
 		if(cipherTextInput.test(inputTestVal) == false ||inputTestVal == '')//Ensure only numbers separated by comma are entered in the textbox using regex
 		{
-			document.getElementById("demo4").innerHTML += "<br/><font color='red'>Error! Cipher text cannot be empty or contain values other than numbers separated by comma</font>";
+			document.getElementById("demo4").innerHTML = "<br/><font color='red'>Error! Cipher text cannot be empty or contain values other than numbers separated by comma</font>";
 		}
 		else{
 			document.getElementById("PTencryptWarn").innerHTML = "<br/><b>DECRYPTION SOLUTION:</b>";
@@ -706,33 +706,32 @@ function decryptCipherText(){
 				}
 			}
 			document.getElementById("PTencryptWarn").innerHTML += "<br/>"
-		}
-
-		//Decrypt each values of the cipher message num
-		for(var k = 0; k< inputTestVal.length; k++)
-		{
-			CT.push(RSAdecrypt(inputTestVal[k]));
-		}
-		
-		//Display decrypted plain text num
-		document.getElementById("demo4").innerHTML += "<b>DECRYPTED MESSAGE NUMBERS:</b><br/>";
-		for(var i = 0; i<encryptedCT.length; i++)
-		{
-			if(i == 0){
-				document.getElementById("demo4").innerHTML += encryptedCT[i];
-			}else{
-				document.getElementById("demo4").innerHTML += ", " + encryptedCT[i];
-			}
-		}
-		document.getElementById("demo4").innerHTML += "<br/><br/><b>DECRYPTED MESSAGE: </b>";
-		
-		//Convert each plain text num to letters and  display
-		for(var j = 0; j<encryptedCT.length; j++)
-		{
 			
-			document.getElementById("demo4").innerHTML += num2txt(encryptedCT[j]);
-		}
-		
+			//Decrypt each values of the cipher message num
+			for(var k = 0; k< inputTestVal.length; k++)
+			{
+				CT.push(RSAdecrypt(inputTestVal[k]));
+			}
+
+			//Display decrypted plain text num
+			document.getElementById("demo4").innerHTML += "<b>DECRYPTED MESSAGE NUMBERS:</b><br/>";
+			for(var i = 0; i<encryptedCT.length; i++)
+			{
+				if(i == 0){
+					document.getElementById("demo4").innerHTML += encryptedCT[i];
+				}else{
+					document.getElementById("demo4").innerHTML += ", " + encryptedCT[i];
+				}
+			}
+			document.getElementById("demo4").innerHTML += "<br/><br/><b>DECRYPTED MESSAGE: </b>";
+
+			//Convert each plain text num to letters and  display
+			for(var j = 0; j<encryptedCT.length; j++)
+			{
+
+				document.getElementById("demo4").innerHTML += num2txt(encryptedCT[j]);
+			}		
+		}		
 	}
 
 	//Clear data for next operations
