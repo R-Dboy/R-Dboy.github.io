@@ -277,7 +277,7 @@ function EncipherPlainText()
 			{
 				cipheredPTarr.push(parseInt(plainText[i], 36) - 9);
 			}
-			if(plainText[i] == 0)
+			if(i == 0)
 			{
 				document.getElementById("PTencryptWarn").innerHTML += plainText[i].toUpperCase() +" = " + cipheredPTarr[i];
 			}
