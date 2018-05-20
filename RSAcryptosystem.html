@@ -691,7 +691,7 @@ function decryptCipherText(){
 			   var tmp = parseFloat(inputTestVal[i]);//parse each value
 			   inputTestVal[i] = (!isNaN(tmp)) ? tmp: inputTestVal[i].replace(/['"]/g,"");
 			}
-			document.getElementById("PTencryptWarn").innerHTML += "<br/> CIPHER TEXT NUM: ";
+			document.getElementById("PTencryptWarn").innerHTML += "<br/> <b>CIPHER TEXT NUM: </b>";
 			
 			//Display values saved
 			for(var i = 0; i<inputTestVal.length; i++)
@@ -705,6 +705,7 @@ function decryptCipherText(){
 					document.getElementById("PTencryptWarn").innerHTML += ", " + inputTestVal[i];
 				}
 			}
+			document.getElementById("PTencryptWarn").innerHTML += "<br/>"
 		}
 
 		//Decrypt each values of the cipher message num
@@ -714,14 +715,22 @@ function decryptCipherText(){
 		}
 		
 		//Display decrypted plain text num
-		document.getElementById("demo4").innerHTML += "<br/><b>DECRYPTED MESSAGE NUMBERS: " + encryptedCT + "</b>";
-		document.getElementById("demo4").innerHTML += "<br/><b>DECRYPTED MESSAGE: </b>";
+		document.getElementById("demo4").innerHTML = "<b>DECRYPTED MESSAGE NUMBERS:</b><br/>";
+		for(var i = 0; i<encryptedCT.length; i++)
+		{
+			if(i == 0){
+				document.getElementById("demo4").innerHTML += encryptedCT[i];
+			}else{
+				document.getElementById("demo4").innerHTML += ", " + encryptedCT[i];
+			}
+		}
+		document.getElementById("demo4").innerHTML += "<br/><br/><b>DECRYPTED MESSAGE: </b>";
 		
 		//Convert each plain text num to letters and  display
 		for(var j = 0; j<encryptedCT.length; j++)
 		{
 			
-			document.getElementById("demo4").innerHTML += "<b>"+ num2txt(encryptedCT[j]) + " </b>";
+			document.getElementById("demo4").innerHTML += num2txt(encryptedCT[j]);
 		}
 		
 	}
