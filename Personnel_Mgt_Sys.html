@@ -140,7 +140,108 @@ function Personnel(id, firstName, lastName, branch, payGrade, rank, joinDate)
 			}
 			
 			return this.rank;	
-	};	
+	};
+	
+	this.demote = function()
+	{
+			switch(this.rank)
+			{
+				case "AB":					
+					document.getElementById("demo1").innerHTML = "Personnel is at the lowest enlisted rank.<br/>" ;
+					 break;
+				case "Amn":
+					 this.rank = "AB";
+					 this.payGrade = "E-1";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "A1C":
+				     this.rank = "Amn";
+					 this.payGrade = "E-2";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "SrA":
+				     this.rank = "A1C";
+					 this.payGrade = "E-3";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+			    case "SSgt":
+					 this.rank = "SrA";
+					 this.payGrade = "E-4";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "TSgt":
+					 this.rank = "SSgt";
+					 this.payGrade = "E-5";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "MSgt":
+					 this.rank = "TSgt";
+					 this.payGrade = "E-6";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "SMSgt":
+				     this.rank = "MSgt";
+					 this.payGrade = "E-7";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "CMSgt":
+					 this.rank = "SMSgt";
+					 this.payGrade = "E-8";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+					 	
+				case "2LT":
+					 document.getElementById("demo1").innerHTML = "Personnel is at the lowes commissioned officer rank.<br/>" ;
+					 break;
+				case "1LT":
+					 this.rank = "2LT";
+					 this.payGrade = "O-1";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "CPT":
+				     this.rank = "1LT";
+					 this.payGrade = "O-2";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "MAJ":
+				     this.rank = "CPT";
+					 this.payGrade = "O-3";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+			    case "LTCOL":
+					 this.rank = "MAJ";
+					 this.payGrade = "O-4";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "COL":
+					 this.rank = "LTCOL";
+					 this.payGrade = "O-5";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "BGEN":
+					 this.rank = "COL";
+					 this.payGrade = "O-6";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "LTGEN":
+				     this.rank = "BGEN";
+					 this.payGrade = "O-7";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "MAJGEN":
+				     this.rank = "LTGEN";
+					 this.payGrade = "O-8";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;
+				case "GEN":
+					 this.rank = "MAJGEN";
+					 this.payGrade = "O-9";
+					 this.salary = CalculateSalary(this.payGrade, this.yearsInService);
+					 break;			
+			}
+			
+			return this.rank;
+	};
 }
 
 //Pay object based on years of service 
@@ -767,7 +868,7 @@ function search(type)
 					document.getElementById("demo1").innerHTML += "<br/>";
 				}
 				else if(type == 1){
-					document.getElementById("demo1").innerHTML += "<button id='" + objArray[i].id + "'onclick='Promote(this.id)'>Promote</button> <button>Demote</button><br/><br/>";
+					document.getElementById("demo1").innerHTML += "<button id='" + objArray[i].id + "'onclick='Promote(this.id)'>Promote</button> <button id='" + objArray[i].id + "'onclick='Demote(this.id)'>Demote</button><br/><br/>";
 				}
 				else{//type == 2
 					document.getElementById("demo1").innerHTML += "<button id='" + objArray[i].id + "'onclick='validateDeletePersonnel(this.id)'>Delete Personnel</button> <button>Cancel</button><br/><br/>";
@@ -815,6 +916,22 @@ function Promote(clicked_id)
 		}
 	}
 }
+	
+//Demotes personnel one rank down changing pay grade and salary
+function Demote(clicked_id)
+{
+	document.getElementById("demo1").innerHTML = "";
+	for(var i = 0; i<objArray.length; i++)
+	{
+		if(clicked_id == objArray[i].id)
+		{
+			objArray[i].demote();
+			//objArray[i].updateSalary();
+			document.getElementById("demo").innerHTML = objArray[i].id + ", " + objArray[i].firstName + " " + objArray[i].lastName + " promoted to " + objArray[i].rank;
+			document.getElementById("demo1").innerHTML = "Personnel ID: "+objArray[i].id +"<br/>Name: " + objArray[i].firstName + " " + objArray[i].lastName + "<br/>Rank: " + objArray[i].rank + "<br/>Pay Grade: " + objArray[i].payGrade + "<br/>Salary: " + nf.format(objArray[i].salary.toFixed(2)) + "<br/>Years in service: " + objArray[i].yearsInService + " " + yearWord(objArray[i].yearsInService) + "<br/>";
+		}
+	}
+}	
 
 //Changes the content of the main page based on which tab is active
 function openTab(evt, tabName){
