@@ -927,7 +927,7 @@ function Demote(clicked_id)
 		{
 			objArray[i].demote();
 			//objArray[i].updateSalary();
-			document.getElementById("demo").innerHTML = objArray[i].id + ", " + objArray[i].firstName + " " + objArray[i].lastName + " promoted to " + objArray[i].rank;
+			document.getElementById("demo").innerHTML = objArray[i].id + ", " + objArray[i].firstName + " " + objArray[i].lastName + " demoted to " + objArray[i].rank;
 			document.getElementById("demo1").innerHTML = "Personnel ID: "+objArray[i].id +"<br/>Name: " + objArray[i].firstName + " " + objArray[i].lastName + "<br/>Rank: " + objArray[i].rank + "<br/>Pay Grade: " + objArray[i].payGrade + "<br/>Salary: " + nf.format(objArray[i].salary.toFixed(2)) + "<br/>Years in service: " + objArray[i].yearsInService + " " + yearWord(objArray[i].yearsInService) + "<br/>";
 		}
 	}
